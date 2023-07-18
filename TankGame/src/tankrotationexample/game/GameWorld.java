@@ -19,6 +19,7 @@ public class GameWorld extends JPanel implements Runnable {
 
     private BufferedImage world;
     private Tank t1;
+    private Tank t2;
     private final Launcher lf;
     private long tick = 0;
 
@@ -35,6 +36,7 @@ public class GameWorld extends JPanel implements Runnable {
             while (true) {
                 this.tick++;
                 this.t1.update(); // update tank
+                this.t2.update();
                 this.repaint();   // redraw game
                 /*
                  * Sleep for 1000/144 ms (~6.9ms). This is done to have our 
@@ -66,6 +68,7 @@ public class GameWorld extends JPanel implements Runnable {
                 BufferedImage.TYPE_INT_RGB);
 
         BufferedImage t1img = null;
+        BufferedImage t2img = null;
         try {
             /*
              * note class loaders read files from the out folder (build folder in Netbeans) and not the
@@ -75,6 +78,10 @@ public class GameWorld extends JPanel implements Runnable {
                     Objects.requireNonNull(GameWorld.class.getClassLoader().getResource("tank1.png"),
                     "Could not find tank1.png")
             );
+            t2img = ImageIO.read(
+                    Objects.requireNonNull(GameWorld.class.getClassLoader().getResource("tank2.png"),
+                            "Could not find tank2.png")
+            );
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
             ex.printStackTrace();
@@ -83,6 +90,10 @@ public class GameWorld extends JPanel implements Runnable {
         t1 = new Tank(300, 300, 0, 0, (short) 0, t1img);
         TankControl tc1 = new TankControl(t1, KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_SPACE);
         this.lf.getJf().addKeyListener(tc1);
+
+        t2 = new Tank(400, 300, 0, 0, (short) 180, t2img);
+        TankControl tc2 = new TankControl(t2, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_C);
+        this.lf.getJf().addKeyListener(tc2);
     }
 
     @Override
