@@ -10,4 +10,14 @@ public class ResourceManager {
     private final static Map<String, List<BufferedImage>> animation = new HashMap<>();
     private final static Map<String, Clip> sounds = new HashMap<>();
 
+    private static void initSprites() {
+        ResourceManager.class.getClassLoader().getResource("tank/tank1.png");
+
+    }
+    public static void loadResources() {
+        ResourceManager.initSprites();
+    }
+    public static void main(String[] args) {
+        ResourceManager.initSprites();
+    }
 }
