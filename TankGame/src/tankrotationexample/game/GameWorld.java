@@ -81,6 +81,8 @@ public class GameWorld extends JPanel implements Runnable {
     public void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         Graphics2D buffer = world.createGraphics();
+        buffer.setColor(Color.black);
+        buffer.fillRect(0,0,GameConstants.GAME_SCREEN_WIDTH, GameConstants.GAME_SCREEN_HEIGHT);
         this.t1.drawImage(buffer);
         this.t2.drawImage(buffer);
         g2.drawImage(world, 0, 0, null);

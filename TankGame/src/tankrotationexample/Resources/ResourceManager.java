@@ -27,6 +27,10 @@ public class ResourceManager {
             ResourceManager.sprites.put("bwall1",loadSprites("walls/breakableWall1.png"));
             ResourceManager.sprites.put("bwall2",loadSprites("walls/breakableWall2.png"));
             ResourceManager.sprites.put("ubwall",loadSprites("walls/unbreakableWall.png"));
+            ResourceManager.sprites.put("powerup",loadSprites("powerUp/powerup.png"));
+            ResourceManager.sprites.put("potion",loadSprites("powerUp/potion.png"));
+            ResourceManager.sprites.put("speed",loadSprites("powerUp/speedrum.png"));
+            ResourceManager.sprites.put("bg",loadSprites("floor/bg.bmp"));
             ResourceManager.sprites.put("menu",loadSprites("menu/title.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
