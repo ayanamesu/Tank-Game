@@ -83,6 +83,7 @@ public class GameWorld extends JPanel implements Runnable {
         this.lf.getJf().addKeyListener(tc2);
     }
 
+
     @Override
     public void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
