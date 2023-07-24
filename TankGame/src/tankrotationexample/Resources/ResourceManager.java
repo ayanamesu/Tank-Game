@@ -17,12 +17,12 @@ public class ResourceManager {
     }
 
     //Maybe Wrong
-    private static Clip loadSound(String path) throws IOException, UnsupportedAudioFileException, LineUnavailableException {
-        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(ResourceManager.class.getClassLoader().getResource(path));
-        Clip clip = AudioSystem.getClip();
-        clip.open(audioInputStream);
-        return clip;
-    }
+//    private static Clip loadSound(String path) throws IOException, UnsupportedAudioFileException, LineUnavailableException {
+//        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(ResourceManager.class.getClassLoader().getResource(path));
+//        Clip clip = AudioSystem.getClip();
+//        clip.open(audioInputStream);
+//        return clip;
+//    }
 
     private static void initSprites() {
         try {
@@ -47,23 +47,23 @@ public class ResourceManager {
     }
 
     //tried with sounds
-    private static void initSounds() {
-        try {
-            ResourceManager.sounds.put("bulletsound", loadSound("sounds/bullet.wav"));
+//    private static void initSounds() {
+//        try {
+//            ResourceManager.sounds.put("bulletsound", loadSound("sounds/bullet.wav"));
 //            ResourceManager.sounds.put("musicTheme", loadSound("sounds/Music.mp3"));
-            ResourceManager.sounds.put("music", loadSound("sounds/music.wav"));
-            ResourceManager.sounds.put("pickup", loadSound("sounds/pickup.wav"));
-            ResourceManager.sounds.put("shotexplosion", loadSound("sounds/shotexplosion.wav"));
-            ResourceManager.sounds.put("shotfiring", loadSound("sounds/shotfiring.wav"));
-        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
+//            ResourceManager.sounds.put("music", loadSound("sounds/music.wav"));
+//            ResourceManager.sounds.put("pickup", loadSound("sounds/pickup.wav"));
+//            ResourceManager.sounds.put("shotexplosion", loadSound("sounds/shotexplosion.wav"));
+//            ResourceManager.sounds.put("shotfiring", loadSound("sounds/shotfiring.wav"));
+//        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//    }
 
     public static void loadResources() {
         ResourceManager.initSprites();
-        ResourceManager.initSounds();
+//        ResourceManager.initSounds();
     }
 
 
@@ -75,10 +75,10 @@ public class ResourceManager {
     }
 
     //Maybe Wrong
-    public static Clip getSound(String type) {
-        if (!ResourceManager.sounds.containsKey(type)) {
-            throw new RuntimeException("%s is missing from sound resources".formatted(type));
-        }
-        return ResourceManager.sounds.get(type);
-    }
+//    public static Clip getSound(String type) {
+//        if (!ResourceManager.sounds.containsKey(type)) {
+//            throw new RuntimeException("%s is missing from sound resources".formatted(type));
+//        }
+//        return ResourceManager.sounds.get(type);
+//    }
 }

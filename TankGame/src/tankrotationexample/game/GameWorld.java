@@ -25,7 +25,7 @@ public class GameWorld extends JPanel implements Runnable {
     private final Launcher lf;
     private long tick = 0;
 
-
+    private BufferedImage background;
 
     /**
      *
@@ -71,7 +71,8 @@ public class GameWorld extends JPanel implements Runnable {
                 GameConstants.GAME_SCREEN_HEIGHT,
                 BufferedImage.TYPE_INT_RGB);
         //Sound
-        Clip musicTheme = ResourceManager.getSound("Music.mp3");
+//        Clip musicTheme = ResourceManager.getSound("Music.mp3");
+        this.background = ResourceManager.getSprite("bg");
 
         t1 = new Tank(300, 300, 0, 0, (short) 0, ResourceManager.getSprite("tank1"));
         TankControl tc1 = new TankControl(t1, KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_SPACE);
@@ -88,6 +89,14 @@ public class GameWorld extends JPanel implements Runnable {
         Graphics2D buffer = world.createGraphics();
         buffer.setColor(Color.black);
         buffer.fillRect(0,0,GameConstants.GAME_SCREEN_WIDTH, GameConstants.GAME_SCREEN_HEIGHT);
+        int horizontalTiles = GameConstants.GAME_SCREEN_WIDTH / background.getWidth() + 1;
+        int verticalTiles   = GameConstants.GAME_SCREEN_HEIGHT / background.getHeight() + 1;
+
+        for (int x = 0; x < horizontalTiles; x++) {
+            for (int y = 0; y < verticalTiles; y++) {
+                buffer.drawImage(background, x * background.getWidth(), y * background.getHeight(), null);
+            }
+        }
         this.t1.drawImage(buffer);
         this.t2.drawImage(buffer);
         g2.drawImage(world, 0, 0, null);
