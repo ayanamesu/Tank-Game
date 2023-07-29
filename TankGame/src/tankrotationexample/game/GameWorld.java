@@ -18,9 +18,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.List;
-/**
- * @author anthony-pc
- */
+
 public class GameWorld extends JPanel implements Runnable {
 
     private BufferedImage world;
