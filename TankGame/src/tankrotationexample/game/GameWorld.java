@@ -75,11 +75,30 @@ public class GameWorld extends JPanel implements Runnable {
         //Sound
 //        Clip musicTheme = ResourceManager.getSound("Music.mp3");
         this.background = ResourceManager.getSprite("bg");
+
+        /**
+         * 0 ---> nothing
+         * 9 ---> unbreakables But non-collidable
+         * 3 ---> unbreakables
+         * 2 ---> breakables
+         * 4 ---> health
+         * 5 ---> speed
+         * 6 ---> powerup
+         */
         InputStreamReader isr = new InputStreamReader(Objects.requireNonNull(ResourceManager.class.getClassLoader().getResourceAsStream("maps/map1.csv")));
         try ( BufferedReader mapReader = new BufferedReader(isr)) {
+            int row = 0;
+            String[] gameItems;
             while(mapReader.ready()) {
-                System.out.println(mapReader.readLine());
+                gameItems = mapReader.readLine().strip().split(",");
+                for(int col = 0; col < gameItems.length; col++) {
+                    String gameObject = gameItems[col];
+                    if ("0".equals(gameObject)) continue;
+                    GameObject.newInstance(gameObject, col*30, row*30);
+                }
+                row++;
             }
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
