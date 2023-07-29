@@ -10,12 +10,14 @@ import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Objects;
-
+import java.util.List;
 /**
  * @author anthony-pc
  */
@@ -26,8 +28,7 @@ public class GameWorld extends JPanel implements Runnable {
     private Tank t2;
     private final Launcher lf;
     private long tick = 0;
-
-    private BufferedImage background;
+    List<GameObject> gobjs = new ArrayList<>(1000);
 
     /**
      *
@@ -45,9 +46,9 @@ public class GameWorld extends JPanel implements Runnable {
                 this.t2.update();
                 this.repaint();   // redraw game
                 /*
-                 * Sleep for 1000/144 ms (~6.9ms). This is done to have our 
-                 * loop run at a fixed rate per/sec. 
-                */
+                 * Sleep for 1000/144 ms (~6.9ms). This is done to have our
+                 * loop run at a fixed rate per/sec.
+                 */
                 Thread.sleep(1000 / 144);
             }
         } catch (InterruptedException ignored) {
@@ -74,7 +75,7 @@ public class GameWorld extends JPanel implements Runnable {
                 BufferedImage.TYPE_INT_RGB);
         //Sound
 //        Clip musicTheme = ResourceManager.getSound("Music.mp3");
-        this.background = ResourceManager.getSprite("bg");
+
 
         /**
          * 0 ---> nothing
@@ -86,15 +87,15 @@ public class GameWorld extends JPanel implements Runnable {
          * 6 ---> powerup
          */
         InputStreamReader isr = new InputStreamReader(Objects.requireNonNull(ResourceManager.class.getClassLoader().getResourceAsStream("maps/map1.csv")));
-        try ( BufferedReader mapReader = new BufferedReader(isr)) {
+        try (BufferedReader mapReader = new BufferedReader(isr)) {
             int row = 0;
             String[] gameItems;
-            while(mapReader.ready()) {
+            while (mapReader.ready()) {
                 gameItems = mapReader.readLine().strip().split(",");
-                for(int col = 0; col < gameItems.length; col++) {
+                for (int col = 0; col < gameItems.length; col++) {
                     String gameObject = gameItems[col];
                     if ("0".equals(gameObject)) continue;
-                    GameObject.newInstance(gameObject, col*30, row*30);
+                    this.gobjs.add(GameObject.newInstance(gameObject, col * 30, row * 30));
                 }
                 row++;
             }
@@ -112,23 +113,56 @@ public class GameWorld extends JPanel implements Runnable {
         this.lf.getJf().addKeyListener(tc2);
     }
 
+    private void drawFloor(Graphics2D buffer) {
+        BufferedImage floor = ResourceManager.getSprite("bg");
+        for (int i = 0; i < GameConstants.GAME_WORLD_WIDTH; i += 320) {
+            for (int j = 0; j < GameConstants.GAME_WORLD_HEIGHT; j += 240) {
+                buffer.drawImage(floor, i, j, null);
+            }
+        }
+    }
 
     @Override
     public void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         Graphics2D buffer = world.createGraphics();
-        buffer.setColor(Color.black);
-        buffer.fillRect(0,0,GameConstants.GAME_SCREEN_WIDTH, GameConstants.GAME_SCREEN_HEIGHT);
-        int horizontalTiles = GameConstants.GAME_SCREEN_WIDTH / background.getWidth() + 1;
-        int verticalTiles   = GameConstants.GAME_SCREEN_HEIGHT / background.getHeight() + 1;
-
-        for (int x = 0; x < horizontalTiles; x++) {
-            for (int y = 0; y < verticalTiles; y++) {
-                buffer.drawImage(background, x * background.getWidth(), y * background.getHeight(), null);
-            }
-        }
+        this.drawFloor(buffer);
+        this.gobjs.forEach(gameObject -> gameObject.drawImage(buffer));
         this.t1.drawImage(buffer);
         this.t2.drawImage(buffer);
+
+        BufferedImage lh = world.getSubimage(0, 0, GameConstants.GAME_SCREEN_WIDTH / 2, GameConstants.GAME_SCREEN_HEIGHT);
+        BufferedImage rh = world.getSubimage(0, 0, GameConstants.GAME_SCREEN_WIDTH / 2, GameConstants.GAME_SCREEN_HEIGHT);
         g2.drawImage(world, 0, 0, null);
+        // IF I TRY TO USE THIS BUFFERIMAGE for mm I GET A GIANT ERROR loop
+//        BufferedImage mm = world.getSubimage(0,0,GameConstants.GAME_WORLD_WIDTH, GameConstants.GAME_WORLD_HEIGHT);
+        g2.drawImage(lh, 0, 0, null);
+        g2.drawImage(rh, GameConstants.GAME_SCREEN_WIDTH / 2 + 4, 0, null);
+
+        this.drawSplitScreen(world, g2);
+        this.drawMiniMap(world, g2);
+    }
+
+    private void drawSplitScreen(BufferedImage world, Graphics2D g2) {
+        BufferedImage lh = world.getSubimage(t1.getScreen_x(), t1.getScreen_y(), GameConstants.GAME_SCREEN_WIDTH / 2, GameConstants.GAME_SCREEN_HEIGHT);
+        g2.drawImage(lh, 0, 0, null);
+
+        BufferedImage rh = world.getSubimage(t2.getScreen_x(), t2.getScreen_y(), GameConstants.GAME_SCREEN_WIDTH / 2, GameConstants.GAME_SCREEN_HEIGHT);
+        g2.drawImage(rh, GameConstants.GAME_SCREEN_WIDTH / 2, 0, null);
+
+        g2.setColor(Color.white);
+        g2.drawRect(GameConstants.GAME_SCREEN_WIDTH / 2 - 2, 0, 4, GameConstants.GAME_SCREEN_HEIGHT);
+        g2.fillRect(GameConstants.GAME_SCREEN_WIDTH / 2 - 2, 0, 4, GameConstants.GAME_SCREEN_HEIGHT);
+    }
+
+
+    private void drawMiniMap(BufferedImage world, Graphics2D g2) {
+        BufferedImage minimap = new BufferedImage(GameConstants.GAME_WORLD_WIDTH, GameConstants.GAME_WORLD_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D minimapGraphics = minimap.createGraphics();
+        minimapGraphics.drawImage(world, 0, 0, null);
+        g2.scale(.2, .2);
+        g2.drawImage(minimap,
+                (GameConstants.GAME_SCREEN_WIDTH * 5) / 2 - (GameConstants.GAME_WORLD_WIDTH / 2),
+                (GameConstants.GAME_SCREEN_HEIGHT * 5) - (GameConstants.GAME_WORLD_HEIGHT) - 190, null);
     }
 }

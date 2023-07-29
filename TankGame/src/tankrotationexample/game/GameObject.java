@@ -2,9 +2,11 @@ package tankrotationexample.game;
 
 import tankrotationexample.Resources.ResourceManager;
 
+import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
-public class GameObject {
+public abstract class GameObject {
 
     public static GameObject newInstance(String type, float x, float y) {
         return switch (type) {
@@ -16,4 +18,8 @@ public class GameObject {
             default -> throw new UnsupportedOperationException();
         };
     }
+
+    public abstract void drawImage(Graphics g);
+
+
 }

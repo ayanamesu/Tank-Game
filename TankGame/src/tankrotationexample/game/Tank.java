@@ -17,7 +17,9 @@ public class Tank{
     private float vy;
     private float angle;
 
-    private float R = 5;
+    private int screen_x;
+    private int screen_y;
+    private float R = 4f;
     private float ROTATIONSPEED = 3.0f;
 
     private BufferedImage img;
@@ -147,4 +149,12 @@ public class Tank{
         g2d.drawRect((int)x,(int)y,this.img.getWidth(), this.img.getHeight());
 
     }
+    public int getScreen_x() {
+        return this.screen_x;
+    }
+
+    public int getScreen_y() {
+        return this.screen_y;
+    }
+
 }
