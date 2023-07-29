@@ -36,6 +36,13 @@ public class Tank{
         this.img = img;
         this.angle = angle;
     }
+    public float getX() {
+        return this.x;
+    }
+
+    public float getY() {
+        return this.y;
+    }
 
     void setX(float x){ this.x = x; }
 
@@ -122,14 +129,14 @@ public class Tank{
         if (x < 30) {
             x = 30;
         }
-        if (x >= GameConstants.GAME_SCREEN_WIDTH - 88) {
-            x = GameConstants.GAME_SCREEN_WIDTH - 88;
+        if (x >= GameConstants.GAME_WORLD_WIDTH - 88) {
+            x = GameConstants.GAME_WORLD_WIDTH - 88;
         }
         if (y < 40) {
             y = 40;
         }
-        if (y >= GameConstants.GAME_SCREEN_HEIGHT - 80) {
-            y = GameConstants.GAME_SCREEN_HEIGHT - 80;
+        if (y >= GameConstants.GAME_WORLD_HEIGHT - 80) {
+            y = GameConstants.GAME_WORLD_HEIGHT - 80;
         }
     }
 

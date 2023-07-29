@@ -28,6 +28,8 @@ public class GameWorld extends JPanel implements Runnable {
     private long tick = 0;
     List<GameObject> gobjs = new ArrayList<>(1000);
 
+
+
     /**
      *
      */
@@ -68,8 +70,8 @@ public class GameWorld extends JPanel implements Runnable {
      * initial state as well.
      */
     public void InitializeGame() {
-        this.world = new BufferedImage(GameConstants.GAME_SCREEN_WIDTH,
-                GameConstants.GAME_SCREEN_HEIGHT,
+        this.world = new BufferedImage(GameConstants.GAME_WORLD_WIDTH,
+                GameConstants.GAME_WORLD_HEIGHT,
                 BufferedImage.TYPE_INT_RGB);
         //Sound
 //        Clip musicTheme = ResourceManager.getSound("Music.mp3");
@@ -128,24 +130,31 @@ public class GameWorld extends JPanel implements Runnable {
         this.gobjs.forEach(gameObject -> gameObject.drawImage(buffer));
         this.t1.drawImage(buffer);
         this.t2.drawImage(buffer);
-
-        BufferedImage lh = world.getSubimage(0, 0, GameConstants.GAME_SCREEN_WIDTH / 2, GameConstants.GAME_SCREEN_HEIGHT);
-        BufferedImage rh = world.getSubimage(0, 0, GameConstants.GAME_SCREEN_WIDTH / 2, GameConstants.GAME_SCREEN_HEIGHT);
         g2.drawImage(world, 0, 0, null);
         // IF I TRY TO USE THIS BUFFERIMAGE for mm I GET A GIANT ERROR loop
 //        BufferedImage mm = world.getSubimage(0,0,GameConstants.GAME_WORLD_WIDTH, GameConstants.GAME_WORLD_HEIGHT);
-        g2.drawImage(lh, 0, 0, null);
-        g2.drawImage(rh, GameConstants.GAME_SCREEN_WIDTH / 2 + 4, 0, null);
-
         this.drawSplitScreen(world, g2);
         this.drawMiniMap(world, g2);
+
     }
 
     private void drawSplitScreen(BufferedImage world, Graphics2D g2) {
-        BufferedImage lh = world.getSubimage(t1.getScreen_x(), t1.getScreen_y(), GameConstants.GAME_SCREEN_WIDTH / 2, GameConstants.GAME_SCREEN_HEIGHT);
-        g2.drawImage(lh, 0, 0, null);
+        int leftTankX = (int) t1.getX() - GameConstants.GAME_SCREEN_WIDTH / 4;
+        int leftTankY = (int) t1.getY() - GameConstants.GAME_SCREEN_HEIGHT / 2;
+        int rightTankX = (int) t2.getX() - GameConstants.GAME_SCREEN_WIDTH / 4;
+        int rightTankY = (int) t2.getY() - GameConstants.GAME_SCREEN_HEIGHT / 2;
 
-        BufferedImage rh = world.getSubimage(t2.getScreen_x(), t2.getScreen_y(), GameConstants.GAME_SCREEN_WIDTH / 2, GameConstants.GAME_SCREEN_HEIGHT);
+        // Make sure the coordinates are within the bounds of the world image
+        leftTankX = Math.max(0, Math.min(leftTankX, world.getWidth() - GameConstants.GAME_SCREEN_WIDTH / 2));
+        leftTankY = Math.max(0, Math.min(leftTankY, world.getHeight() - GameConstants.GAME_SCREEN_HEIGHT));
+        rightTankX = Math.max(0, Math.min(rightTankX, world.getWidth() - GameConstants.GAME_SCREEN_WIDTH / 2));
+        rightTankY = Math.max(0, Math.min(rightTankY, world.getHeight() - GameConstants.GAME_SCREEN_HEIGHT));
+
+        BufferedImage lh = world.getSubimage(leftTankX, leftTankY, GameConstants.GAME_SCREEN_WIDTH / 2, GameConstants.GAME_SCREEN_HEIGHT);
+        BufferedImage rh = world.getSubimage(rightTankX, rightTankY, GameConstants.GAME_SCREEN_WIDTH / 2, GameConstants.GAME_SCREEN_HEIGHT);
+
+        // Draw the subimages
+        g2.drawImage(lh, 0, 0, null);
         g2.drawImage(rh, GameConstants.GAME_SCREEN_WIDTH / 2, 0, null);
 
         g2.setColor(Color.white);
@@ -158,9 +167,9 @@ public class GameWorld extends JPanel implements Runnable {
         BufferedImage minimap = new BufferedImage(GameConstants.GAME_WORLD_WIDTH, GameConstants.GAME_WORLD_HEIGHT, BufferedImage.TYPE_INT_ARGB);
         Graphics2D minimapGraphics = minimap.createGraphics();
         minimapGraphics.drawImage(world, 0, 0, null);
-        g2.scale(.2, .2);
+        g2.scale(0.2, 0.2);
         g2.drawImage(minimap,
-                (GameConstants.GAME_SCREEN_WIDTH * 5) / 2 - (GameConstants.GAME_WORLD_WIDTH / 2),
-                (GameConstants.GAME_SCREEN_HEIGHT * 5) - (GameConstants.GAME_WORLD_HEIGHT) - 190, null);
+                (GameConstants.GAME_SCREEN_WIDTH * 5)/2- (GameConstants.GAME_WORLD_WIDTH )/3,
+                (GameConstants.GAME_SCREEN_HEIGHT * 5) - (GameConstants.GAME_WORLD_HEIGHT)+200, null);
     }
 }
