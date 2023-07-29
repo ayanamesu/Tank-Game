@@ -11,7 +11,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Objects;
 
 /**
@@ -73,6 +75,14 @@ public class GameWorld extends JPanel implements Runnable {
         //Sound
 //        Clip musicTheme = ResourceManager.getSound("Music.mp3");
         this.background = ResourceManager.getSprite("bg");
+        InputStreamReader isr = new InputStreamReader(Objects.requireNonNull(ResourceManager.class.getClassLoader().getResourceAsStream("maps/map1.csv")));
+        try ( BufferedReader mapReader = new BufferedReader(isr)) {
+            while(mapReader.ready()) {
+                System.out.println(mapReader.readLine());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         t1 = new Tank(300, 300, 0, 0, (short) 0, ResourceManager.getSprite("tank1"));
         TankControl tc1 = new TankControl(t1, KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_SPACE);
