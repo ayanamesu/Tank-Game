@@ -1,9 +1,12 @@
 package tankrotationexample.game;
 
 import tankrotationexample.GameConstants;
+import tankrotationexample.Resources.ResourceManager;
+
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 
 public class Tank{
@@ -23,6 +26,24 @@ public class Tank{
     private boolean DownPressed;
     private boolean RightPressed;
     private boolean LeftPressed;
+
+    private boolean ShootPressed;
+
+    private Bullet b;
+
+    ArrayList<Bullet> ammo = new ArrayList<>();
+
+
+    float fireDelay = 120f;
+    float coolDown = 0f;
+    float rateOfFire = 1f;
+
+
+    private int health = 100;
+    private int lives = 5;
+
+    private boolean isDead;
+    private float speed = 4f;
 
     Tank(float x, float y, float vx, float vy, float angle, BufferedImage img) {
         this.x = x;
@@ -92,6 +113,23 @@ public class Tank{
         if (this.RightPressed) {
             this.rotateRight();
         }
+        if (this.ShootPressed && this.coolDown >= this.fireDelay) {
+            this.coolDown = 0;
+            b = new Bullet(x, y, angle, ResourceManager.getSprite("bullet"));
+            this.ammo.add(b);
+        }
+
+//        if (this.getHitBox().intersects(other.getHitBox())) {
+//            handleCollision(other);
+//        }
+
+        this.coolDown += this.rateOfFire;
+
+//        this.ammo.forEach(b -> b.update());
+//
+//        this.updateHitBox((int) x, (int) y);
+//
+//        this.shootOther(other);
 
 
     }
@@ -120,6 +158,13 @@ public class Tank{
         checkBorder();
     }
 
+    public void addLife() {this.lives += 1;}
+    public void addSpeed() {this.speed += 2f;}
+
+    public void resetHealth() { this.health = 100; }
+
+
+
 
     private void checkBorder() {
         if (x < 30) {
@@ -146,12 +191,22 @@ public class Tank{
         AffineTransform rotation = AffineTransform.getTranslateInstance(x, y);
         rotation.rotate(Math.toRadians(angle), this.img.getWidth() / 2.0, this.img.getHeight() / 2.0);
         Graphics2D g2d = (Graphics2D) g;
+        if (b!= null) {
+            this.b.drawImage(g2d);
+        }
+        this.ammo.forEach(b -> b.drawImage(g2d));
         g2d.drawImage(this.img, rotation, null);
         g2d.setColor(Color.RED);
-        //g2d.rotate(Math.toRadians(angle), bounds.x + bounds.width/2, bounds.y + bounds.height/2);
         g2d.drawRect((int)x,(int)y,this.img.getWidth(), this.img.getHeight());
 
     }
 
 
+    public void toggleShootPressed() {
+        this.ShootPressed = true;
+    }
+
+    public void unToggleShootPressed() {
+        this.ShootPressed = false;
+    }
 }
