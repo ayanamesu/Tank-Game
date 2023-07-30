@@ -6,10 +6,11 @@ import tankrotationexample.Resources.ResourceManager;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 
 
-public class Tank{
+public class Tank extends GameObject {
 
     private float x;
     private float y;
@@ -17,9 +18,24 @@ public class Tank{
     private float vy;
     private float angle;
 
-
-    private float R = 4f;
+    private float R = 3f;
     private float ROTATIONSPEED = 3.0f;
+
+    private Bullet b;
+
+    Bullet currentChargeBullet = null;
+
+    ArrayList<Bullet> ammo = new ArrayList<>();
+
+    float fireDelay = 50f;
+    float coolDown = 0f;
+    float rateOfFire = 1f;
+
+    private int health = 100;
+    private int lives = 5;
+
+    private boolean isDead;
+    private float speed = 4f;
 
     private BufferedImage img;
     private boolean UpPressed;
@@ -29,21 +45,7 @@ public class Tank{
 
     private boolean ShootPressed;
 
-    private Bullet b;
-
-    ArrayList<Bullet> ammo = new ArrayList<>();
-
-
-    float fireDelay = 120f;
-    float coolDown = 0f;
-    float rateOfFire = 1f;
-
-
-    private int health = 100;
-    private int lives = 5;
-
-    private boolean isDead;
-    private float speed = 4f;
+    private Rectangle hitbox;
 
     Tank(float x, float y, float vx, float vy, float angle, BufferedImage img) {
         this.x = x;
@@ -52,6 +54,10 @@ public class Tank{
         this.vy = vy;
         this.img = img;
         this.angle = angle;
+        this.hitbox= new Rectangle((int)x, (int)y, this.img.getWidth(), this.img.getHeight());
+    }
+    public Rectangle getHitbox() {
+        return this.hitbox.getBounds();
     }
     public float getX() {
         return this.x;
@@ -114,25 +120,32 @@ public class Tank{
             this.rotateRight();
         }
         if (this.ShootPressed && this.coolDown >= this.fireDelay) {
+//            if (this.currentChargeBullet == null) {
+//                this.currentChargeBullet = new Bullet(x, y, angle, ResourceManager.getSprite("star2"));
+//            } else {
+//                this.currentChargeBullet.increaseCharge();
+//                this.currentChargeBullet.setHeading(x, y, angle);
+//            }
+//        } else {
+//                if(this.currentChargeBullet != null) {
+//                    this.ammo.add(currentChargeBullet);
+//                    this.currentChargeBullet = null;
+//                    this.coolDown = 0;
+//                }
+//            }
             this.coolDown = 0;
             b = new Bullet(x, y, angle, ResourceManager.getSprite("bullet"));
             this.ammo.add(b);
+
         }
-
-//        if (this.getHitBox().intersects(other.getHitBox())) {
-//            handleCollision(other);
-//        }
-
         this.coolDown += this.rateOfFire;
-
         this.ammo.forEach(b -> b.update());
-//
-//        this.updateHitBox((int) x, (int) y);
-//
-//        this.shootOther(other);
-
-
+        this.hitbox.setLocation((int)x,(int)y);
     }
+
+
+
+
 
     private void rotateLeft() {
         this.angle -= this.ROTATIONSPEED;
@@ -158,13 +171,6 @@ public class Tank{
         checkBorder();
     }
 
-    public void addLife() {this.lives += 1;}
-    public void addSpeed() {this.speed += 2f;}
-
-    public void resetHealth() { this.health = 100; }
-
-
-
 
     private void checkBorder() {
         if (x < 30) {
@@ -187,10 +193,13 @@ public class Tank{
     }
 
 
-    void drawImage(Graphics g) {
+    public void drawImage(Graphics g) {
         AffineTransform rotation = AffineTransform.getTranslateInstance(x, y);
         rotation.rotate(Math.toRadians(angle), this.img.getWidth() / 2.0, this.img.getHeight() / 2.0);
         Graphics2D g2d = (Graphics2D) g;
+        if(this.currentChargeBullet != null) {
+            this.currentChargeBullet.drawImage(g2d);
+        }
         if (b!= null) {
             this.b.drawImage(g2d);
         }
@@ -200,7 +209,37 @@ public class Tank{
         g2d.drawRect((int)x,(int)y,this.img.getWidth(), this.img.getHeight());
 
     }
+    public void collides(GameObject with) {
+        if(with instanceof  Bullet) {
+            if (!isDead) {
+                health -= 25;
+                if (health <= 0) {
+                    isDead = true;
+                    lives--;
+                    if (lives > 0) {
+                        respawn();
+                    } else {
+                        System.out.println("Game Over");
+                    }
+                }
+            }
+        } else if (with instanceof  Wall) {
+            stopMoving();
 
+        }else if (with instanceof  PowerUps) {
+            ((PowerUps)with).applyPowerUp(this);
+        }
+    }
+
+    private void respawn() {
+        health = 100;
+        x = GameConstants.GAME_WORLD_WIDTH / 2;
+        y = GameConstants.GAME_WORLD_HEIGHT / 2;
+    }
+    private void stopMoving() {
+        vx = 0;
+        vy = 0;
+    }
 
     public void toggleShootPressed() {
         this.ShootPressed = true;

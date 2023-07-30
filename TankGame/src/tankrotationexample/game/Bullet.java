@@ -13,6 +13,8 @@ public class Bullet extends GameObject {
     private float vx;
     private float vy;
 
+    private float charge = 1f;
+
     private float angle;
 
     private float R = 6;
@@ -30,6 +32,19 @@ public class Bullet extends GameObject {
         this.vx =0;
         this.vy = 0;
         this.angle = angle;
+        this.hitbox= new Rectangle((int)x, (int)y, this.img.getWidth(), this.img.getHeight());
+    }
+    public Rectangle getHitbox() {
+        return this.hitbox.getBounds();
+    }
+
+    @Override
+    public void collides(GameObject obj2) {
+
+    }
+
+    public void increaseCharge() {
+        this.charge = this.charge + 0.05f;
     }
 
     public float getX() {
@@ -48,6 +63,7 @@ public class Bullet extends GameObject {
     void update() {
 
         this.moveForwards();
+        this.hitbox.setLocation((int)x,(int)y);
 
     }
 
@@ -81,9 +97,16 @@ public class Bullet extends GameObject {
     public void drawImage(Graphics g) {
         AffineTransform rotation = AffineTransform.getTranslateInstance(x, y);
         rotation.rotate(Math.toRadians(angle), this.img.getWidth() / 2.0, this.img.getHeight() / 2.0);
+        rotation.scale(this.charge,this.charge);
         Graphics2D g2d = (Graphics2D) g;
         g2d.drawImage(this.img, rotation, null);
 
     }
 
+    public void setHeading(float x, float y, float angle) {
+        this.x =x;
+        this.y =y;
+        this.angle = angle;
+
+    }
 }
