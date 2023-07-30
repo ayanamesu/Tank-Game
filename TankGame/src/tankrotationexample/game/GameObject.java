@@ -3,8 +3,7 @@ package tankrotationexample.game;
 import tankrotationexample.Resources.ResourceManager;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
+
 
 public abstract class GameObject {
 

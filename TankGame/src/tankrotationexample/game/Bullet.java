@@ -32,6 +32,8 @@ public class Bullet extends GameObject {
         this.vx =0;
         this.vy = 0;
         this.angle = angle;
+        this.visible = true;
+
         this.hitbox= new Rectangle((int)x, (int)y, this.img.getWidth(), this.img.getHeight());
     }
     public Rectangle getHitbox() {
@@ -40,7 +42,8 @@ public class Bullet extends GameObject {
 
     @Override
     public void collides(GameObject obj2) {
-
+        obj2.collides(this);
+        this.visible = false;
     }
 
     public void increaseCharge() {
@@ -81,13 +84,10 @@ public class Bullet extends GameObject {
             this.visible = false;
         }
 
-//        this.updateHitBox((int) x, (int) y);
+
     }
 
-//    private void updateHitBox(int x, int y) {
-//        this.hitbox.x = x;
-//        this.hitbox.y = y;
-//    }
+
 
     @Override
     public String toString() {
@@ -103,10 +103,14 @@ public class Bullet extends GameObject {
 
     }
 
-    public void setHeading(float x, float y, float angle) {
-        this.x =x;
-        this.y =y;
-        this.angle = angle;
+//    public void setHeading(float x, float y, float angle) {
+//        this.x =x;
+//        this.y =y;
+//        this.angle = angle;
+//
+//    }
 
+    public boolean isVisible() {
+        return this.visible;
     }
 }

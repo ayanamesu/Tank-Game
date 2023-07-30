@@ -6,7 +6,6 @@ import tankrotationexample.Resources.ResourceManager;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 
 
@@ -24,7 +23,7 @@ public class Tank extends GameObject {
     private Bullet b;
 
     Bullet currentChargeBullet = null;
-
+    private ArrayList<Wall> walls;
     ArrayList<Bullet> ammo = new ArrayList<>();
 
     float fireDelay = 50f;
@@ -32,10 +31,9 @@ public class Tank extends GameObject {
     float rateOfFire = 1f;
 
     private int health = 100;
-    private int lives = 5;
+    private int lives = 3;
 
     private boolean isDead;
-    private float speed = 4f;
 
     private BufferedImage img;
     private boolean UpPressed;
@@ -47,6 +45,10 @@ public class Tank extends GameObject {
 
     private Rectangle hitbox;
 
+    private boolean isReverse;
+    private float initialX;
+    private float initialY;
+
     Tank(float x, float y, float vx, float vy, float angle, BufferedImage img) {
         this.x = x;
         this.y = y;
@@ -54,6 +56,9 @@ public class Tank extends GameObject {
         this.vy = vy;
         this.img = img;
         this.angle = angle;
+        this.isReverse = false;
+
+
         this.hitbox= new Rectangle((int)x, (int)y, this.img.getWidth(), this.img.getHeight());
     }
     public Rectangle getHitbox() {
@@ -119,7 +124,9 @@ public class Tank extends GameObject {
         if (this.RightPressed) {
             this.rotateRight();
         }
+
         if (this.ShootPressed && this.coolDown >= this.fireDelay) {
+            //instead of chargedBullet make it so that if u hold spacebar it shoot another type of bullet "star2"?
 //            if (this.currentChargeBullet == null) {
 //                this.currentChargeBullet = new Bullet(x, y, angle, ResourceManager.getSprite("star2"));
 //            } else {
@@ -137,8 +144,10 @@ public class Tank extends GameObject {
             b = new Bullet(x, y, angle, ResourceManager.getSprite("bullet"));
             this.ammo.add(b);
 
+
         }
         this.coolDown += this.rateOfFire;
+
         this.ammo.forEach(b -> b.update());
         this.hitbox.setLocation((int)x,(int)y);
     }
@@ -161,6 +170,7 @@ public class Tank extends GameObject {
         x -= vx;
         y -= vy;
        checkBorder();
+
     }
 
     private void moveForwards() {
@@ -185,6 +195,9 @@ public class Tank extends GameObject {
         if (y >= GameConstants.GAME_WORLD_HEIGHT - 80) {
             y = GameConstants.GAME_WORLD_HEIGHT - 80;
         }
+        this.hitbox.setLocation((int)this.x, (int)this.y);
+
+
     }
 
     @Override
@@ -207,10 +220,25 @@ public class Tank extends GameObject {
         g2d.drawImage(this.img, rotation, null);
         g2d.setColor(Color.RED);
         g2d.drawRect((int)x,(int)y,this.img.getWidth(), this.img.getHeight());
+        if(this.health >= 70) {
+            g2d.setColor(Color.GREEN);
+        } else if (this.health >= 35) {
+            g2d.setColor(Color.ORANGE);
+        } else {
+            g2d.setColor(Color.RED);
+        }
+        g2d.drawRect((int)x-25,(int)y-30, 100, 10 );
+        g2d.fillRect((int)x-25,(int)y-30, this.health, 10 );
+
+        for (int i=0; i < this.lives; i++) {
+            g2d.drawOval((int)(x-10) + (i*20), (int)y + 55, 15, 15);
+            g2d.fillOval((int)(x-10) + (i*20), (int)y + 55, 15, 15);
+        }
 
     }
+
     public void collides(GameObject with) {
-        if(with instanceof  Bullet) {
+        if (with instanceof Bullet) {
             if (!isDead) {
                 health -= 25;
                 if (health <= 0) {
@@ -223,23 +251,36 @@ public class Tank extends GameObject {
                     }
                 }
             }
-        } else if (with instanceof  Wall) {
-            stopMoving();
+        }else if (with instanceof  Wall) {
+            //idk if this should be it, skips through walls
+            if(isReverse) {
+                this.moveForwards();
+            } else {
+                this.moveBackwards();
+            } checkBorder();
 
-        }else if (with instanceof  PowerUps) {
+        } else if (with instanceof  BreakableWall) {
+            // add code here so that when breakable wall gets hit by a bullet from a tank and after 2 hits the wall breaks
+
+
+        } else if (with instanceof  Tank) {
+            if(isReverse) {
+                this.moveForwards();
+            } else {
+                this.moveBackwards();
+            }
+
+        } else if (with instanceof  PowerUps) {
             ((PowerUps)with).applyPowerUp(this);
         }
     }
 
     private void respawn() {
         health = 100;
-        x = GameConstants.GAME_WORLD_WIDTH / 2;
-        y = GameConstants.GAME_WORLD_HEIGHT / 2;
+        x = initialX;
+        y = initialY;
     }
-    private void stopMoving() {
-        vx = 0;
-        vy = 0;
-    }
+
 
     public void toggleShootPressed() {
         this.ShootPressed = true;
