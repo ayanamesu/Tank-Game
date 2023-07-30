@@ -46,6 +46,12 @@ public class Bullet extends GameObject {
     }
 
     void update() {
+
+        this.moveForwards();
+
+    }
+
+    private void moveForwards() {
         x += Math.round(R * Math.cos(Math.toRadians(angle)));
         y += Math.round(R * Math.sin(Math.toRadians(angle)));
         checkBorder();
@@ -59,13 +65,13 @@ public class Bullet extends GameObject {
             this.visible = false;
         }
 
-        this.updateHitBox((int) x, (int) y);
+//        this.updateHitBox((int) x, (int) y);
     }
 
-    private void updateHitBox(int x, int y) {
-        this.hitbox.x = x;
-        this.hitbox.y = y;
-    }
+//    private void updateHitBox(int x, int y) {
+//        this.hitbox.x = x;
+//        this.hitbox.y = y;
+//    }
 
     @Override
     public String toString() {

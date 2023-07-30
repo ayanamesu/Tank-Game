@@ -125,7 +125,7 @@ public class Tank{
 
         this.coolDown += this.rateOfFire;
 
-//        this.ammo.forEach(b -> b.update());
+        this.ammo.forEach(b -> b.update());
 //
 //        this.updateHitBox((int) x, (int) y);
 //
