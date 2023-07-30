@@ -144,7 +144,6 @@ public class GameWorld extends JPanel implements Runnable {
         int rightTankX = (int) t2.getX() - GameConstants.GAME_SCREEN_WIDTH / 4;
         int rightTankY = (int) t2.getY() - GameConstants.GAME_SCREEN_HEIGHT / 2;
 
-        // Make sure the coordinates are within the bounds of the world image
         leftTankX = Math.max(0, Math.min(leftTankX, world.getWidth() - GameConstants.GAME_SCREEN_WIDTH / 2));
         leftTankY = Math.max(0, Math.min(leftTankY, world.getHeight() - GameConstants.GAME_SCREEN_HEIGHT));
         rightTankX = Math.max(0, Math.min(rightTankX, world.getWidth() - GameConstants.GAME_SCREEN_WIDTH / 2));
@@ -153,7 +152,6 @@ public class GameWorld extends JPanel implements Runnable {
         BufferedImage lh = world.getSubimage(leftTankX, leftTankY, GameConstants.GAME_SCREEN_WIDTH / 2, GameConstants.GAME_SCREEN_HEIGHT);
         BufferedImage rh = world.getSubimage(rightTankX, rightTankY, GameConstants.GAME_SCREEN_WIDTH / 2, GameConstants.GAME_SCREEN_HEIGHT);
 
-        // Draw the subimages
         g2.drawImage(lh, 0, 0, null);
         g2.drawImage(rh, GameConstants.GAME_SCREEN_WIDTH / 2, 0, null);
 
@@ -169,7 +167,7 @@ public class GameWorld extends JPanel implements Runnable {
         minimapGraphics.drawImage(world, 0, 0, null);
         g2.scale(0.2, 0.2);
         g2.drawImage(minimap,
-                (GameConstants.GAME_SCREEN_WIDTH * 5)/2- (GameConstants.GAME_WORLD_WIDTH )/3,
-                (GameConstants.GAME_SCREEN_HEIGHT * 5) - (GameConstants.GAME_WORLD_HEIGHT)+200, null);
+                (GameConstants.GAME_SCREEN_WIDTH * 5)/2- (GameConstants.GAME_WORLD_WIDTH )/2,
+                (GameConstants.GAME_SCREEN_HEIGHT * 5) - (GameConstants.GAME_WORLD_HEIGHT)-190, null);
     }
 }
