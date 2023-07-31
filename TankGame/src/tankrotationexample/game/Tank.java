@@ -57,6 +57,7 @@ public class Tank extends GameObject {
         this.angle = angle;
         this.isReverse = false;
         this.isDead = false;
+        this.speed = 1.0f;
 
 
 
@@ -262,21 +263,22 @@ public class Tank extends GameObject {
     }
 
     public void collides(GameObject with) {
-        if (with instanceof Bullet) {
-            //lose Life does not work because bullet not in GameObject
-            if (!isDead) {
-                health -= 25;
-                if (health <= 0) {
-                    isDead = true;
-                    lives--;
-                    if (lives > 0) {
-                        respawn();
-                    } else {
-                        System.out.println("Game Over");
-                    }
-                }
-            }
-        } else if (with instanceof  Wall) {
+//        if (with instanceof Bullet) {
+//            //lose Life does not work because bullet not in GameObject
+//            if (!isDead) {
+//                health -= 25;
+//                if (health <= 0) {
+//                    isDead = true;
+//                    lives--;
+//                    if (lives > 0) {
+//                        respawn();
+//                    } else {
+//                        System.out.println("Game Over");
+//                    }
+//                }
+//            }
+//        }
+         if (with instanceof  Wall) {
             //idk if this should be it, skips through walls
             if(isReverse) {
                 this.moveForwards();
@@ -321,6 +323,7 @@ public class Tank extends GameObject {
 
     public void addHealth() {
         this.health += 25;
+        System.out.println("Hp increase +25");
         if(this.health >100) {
             this.health = 100;
         }
