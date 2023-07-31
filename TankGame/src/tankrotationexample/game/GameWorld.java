@@ -28,7 +28,7 @@ public class GameWorld extends JPanel implements Runnable {
     private long tick = 0;
 
     List<GameObject> gobjs = new ArrayList<>(1000);
-    List<Wall> walls = new ArrayList<Wall>();
+
 
 
 
@@ -77,11 +77,13 @@ public class GameWorld extends JPanel implements Runnable {
                 if(obj1.getHitbox().intersects(obj2.getHitbox())) {
                     obj1.collides(obj2);
                     System.out.println(obj1 + " " + "Has hit" + " " + obj2);
+
                 }
 
             }
         }
     }
+
 
     /**
      * Reset game to its initial state.

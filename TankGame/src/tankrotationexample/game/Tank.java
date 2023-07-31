@@ -7,9 +7,9 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.List;
 
-
-public class Tank extends GameObject implements PowerUps {
+public class Tank extends GameObject {
 
     private float x;
     private float y;
@@ -17,18 +17,16 @@ public class Tank extends GameObject implements PowerUps {
     private float vy;
     private float angle;
 
+
+
     private float R = 3f;
     private float ROTATIONSPEED = 3.0f;
 
-    private Bullet b;
-
+    List<Bullet> ammo = new ArrayList<>();
+    long timeSinceLastShot = 0L;
+    long cooldown = 2000;
     Bullet currentChargeBullet = null;
-    private ArrayList<Wall> walls;
-    ArrayList<Bullet> ammo = new ArrayList<>();
 
-    float fireDelay = 50f;
-    float coolDown = 0f;
-    float rateOfFire = 1f;
     private float speed;
 
     private int health = 100;
@@ -60,6 +58,8 @@ public class Tank extends GameObject implements PowerUps {
         this.isReverse = false;
         this.isDead = false;
 
+
+
         this.hitbox= new Rectangle((int)x, (int)y, this.img.getWidth(), this.img.getHeight());
     }
     public Rectangle getHitbox() {
@@ -77,13 +77,8 @@ public class Tank extends GameObject implements PowerUps {
 
     void setY(float y) { this. y = y;}
 
-    public float getSpeed() {
-        return speed;
-    }
 
-    public void setSpeed(float speed) {
-        this.speed = speed;
-    }
+    public void resetHealth() { this.health = 100; }
 
     void toggleUpPressed() {
         this.UpPressed = true;
@@ -134,7 +129,7 @@ public class Tank extends GameObject implements PowerUps {
             this.rotateRight();
         }
 
-        if (this.ShootPressed && this.coolDown >= this.fireDelay) {
+        if (this.ShootPressed && ((this.timeSinceLastShot + this.cooldown) < System.currentTimeMillis())) {
             //instead of chargedBullet make it so that if u hold spacebar it shoot another type of bullet "star2"?
 //            if (this.currentChargeBullet == null) {
 //                this.currentChargeBullet = new Bullet(x, y, angle, ResourceManager.getSprite("star2"));
@@ -144,20 +139,19 @@ public class Tank extends GameObject implements PowerUps {
 //            }
 //        } else {
 //                if(this.currentChargeBullet != null) {
-//                    this.ammo.add(currentChargeBullet);
+//                    this.ammo.add(this.currentChargeBullet);
+//                    this.timeSinceLastShot = System.currentTImeMillis();
 //                    this.currentChargeBullet = null;
-//                    this.coolDown = 0;
+//
 //                }
 //            }
-            this.coolDown = 0;
-            b = new Bullet(x, y, angle, ResourceManager.getSprite("bullet"));
-            this.ammo.add(b);
+            this.timeSinceLastShot = System.currentTimeMillis();
+            this.ammo.add(new Bullet(x, y, angle, ResourceManager.getSprite("bullet")));
+
 
 
         }
-        this.coolDown += this.rateOfFire;
-
-        this.ammo.forEach(b -> b.update());
+        this.ammo.forEach(bullet -> bullet.update());
         this.hitbox.setLocation((int)x,(int)y);
     }
 
@@ -208,6 +202,23 @@ public class Tank extends GameObject implements PowerUps {
 
 
     }
+    public void getShot() {
+        this.health -= 11;
+
+        if (this.health <= 0) {
+            this.resetHealth();
+            this.lives -= 1;
+        }
+
+        if(this.lives <= 0) {
+            this.isDead = true;
+        }
+
+    }
+
+    public boolean getIsDead() {
+        return this.isDead;
+    }
 
     @Override
     public String toString() {
@@ -222,10 +233,14 @@ public class Tank extends GameObject implements PowerUps {
         if(this.currentChargeBullet != null) {
             this.currentChargeBullet.drawImage(g2d);
         }
-        if (b!= null) {
-            this.b.drawImage(g2d);
+        this.ammo.forEach(b ->b.drawImage(g2d));
+        g2d.setColor(Color.CYAN);
+        g2d.drawRect((int)x-25,(int)y-20, 100, 10);
+        long currentWidth = 100 - ((this.timeSinceLastShot + this.cooldown) - System.currentTimeMillis())/20;
+        if(currentWidth >100) {
+            currentWidth = 100;
         }
-        this.ammo.forEach(b -> b.drawImage(g2d));
+        g2d.fillRect((int)x-25,(int)y-20,(int)currentWidth , 10);
         g2d.drawImage(this.img, rotation, null);
         g2d.setColor(Color.RED);
         g2d.drawRect((int)x,(int)y,this.img.getWidth(), this.img.getHeight());
@@ -236,8 +251,8 @@ public class Tank extends GameObject implements PowerUps {
         } else {
             g2d.setColor(Color.RED);
         }
-        g2d.drawRect((int)x-25,(int)y-30, 100, 10 );
-        g2d.fillRect((int)x-25,(int)y-30, this.health, 10 );
+        g2d.drawRect((int)x-25,(int)y-30, 100, 12 );
+        g2d.fillRect((int)x-25,(int)y-30, this.health, 12 );
 
         for (int i=0; i < this.lives; i++) {
             g2d.drawOval((int)(x-10) + (i*20), (int)y + 55, 15, 15);
@@ -248,6 +263,7 @@ public class Tank extends GameObject implements PowerUps {
 
     public void collides(GameObject with) {
         if (with instanceof Bullet) {
+            //lose Life does not work because bullet not in GameObject
             if (!isDead) {
                 health -= 25;
                 if (health <= 0) {
@@ -282,16 +298,8 @@ public class Tank extends GameObject implements PowerUps {
                 this.moveBackwards();
             }
 
-        }  else if (with instanceof Health) {
-            if (this.health < 100) {
-                this.health += 50;
-                if (this.health > 100) {
-                    this.health = 100;
-                }
-                ((Health) with).onCollected();
-            }
         } else if (with instanceof  PowerUps) {
-            ((speed)with).applyPowerUp(this);
+            ((PowerUps)with).applyPowerUp(this);
         }
     }
 
@@ -310,14 +318,23 @@ public class Tank extends GameObject implements PowerUps {
         this.ShootPressed = false;
     }
 
-    @Override
-    public void applyPowerUp(GameObject tank) {
-        if (tank instanceof Tank) {
-            Tank t = (Tank) tank;
-            // Apply power-up effect to the tank
-            // For example, increase the tank's speed and health
-            t.setSpeed(t.getSpeed() * 1.5f); // Increase speed by 50%
 
+    public void addHealth() {
+        this.health += 25;
+        if(this.health >100) {
+            this.health = 100;
         }
     }
+    public void addSpeed() {
+        this.speed *= 0.5f;
+        System.out.println("speed");
+    }
+
+    public void addDamageIncrease() {
+        for (Bullet bullet : ammo) {
+            bullet.setImage(ResourceManager.getSprite("star2"));
+            bullet.setDamage(bullet.getDamage() + 10);
+        }
+    }
+
 }

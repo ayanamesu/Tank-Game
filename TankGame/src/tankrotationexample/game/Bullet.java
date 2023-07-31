@@ -17,13 +17,14 @@ public class Bullet extends GameObject {
 
     private float angle;
 
-    private float R = 6;
+    private float R = 4;
 
     private BufferedImage img;
 
     private Rectangle hitbox;
 
     private boolean visible;
+    private int damage;
 
     public Bullet(float x, float y, float angle, BufferedImage img) {
         this.x = x;
@@ -33,6 +34,7 @@ public class Bullet extends GameObject {
         this.vy = 0;
         this.angle = angle;
         this.visible = true;
+        this.damage = 15;
 
         this.hitbox= new Rectangle((int)x, (int)y, this.img.getWidth(), this.img.getHeight());
     }
@@ -42,8 +44,15 @@ public class Bullet extends GameObject {
 
     @Override
     public void collides(GameObject obj2) {
-        obj2.collides(this);
-        this.visible = false;
+        if(obj2 instanceof Wall) {
+            this.visible = false;
+        }
+
+        if(obj2 instanceof Tank) {
+
+            ((Tank) obj2).getShot();
+            this.visible = false;
+        }
     }
 
     public void increaseCharge() {
@@ -58,24 +67,17 @@ public class Bullet extends GameObject {
         return this.y;
     }
 
-    void setPosition(float x, float y) {
-        this.x = x;
-        this.y = y;
-    }
 
     void update() {
-
-        this.moveForwards();
-        this.hitbox.setLocation((int)x,(int)y);
-
-    }
-
-
-    private void moveForwards() {
-        x += Math.round(R * Math.cos(Math.toRadians(angle)));
-        y += Math.round(R * Math.sin(Math.toRadians(angle)));
+        vx = Math.round(R * Math.cos(Math.toRadians(angle)));
+        vy = Math.round(R * Math.sin(Math.toRadians(angle)));
+        x += vx;
+        y += vy;
         checkBorder();
+        this.hitbox.setLocation((int)x,(int)y);
     }
+
+
 
     private void checkBorder() {
         if ((x < 30) || (x >= GameConstants.GAME_WORLD_WIDTH - 88)) {
@@ -87,8 +89,6 @@ public class Bullet extends GameObject {
 
 
     }
-
-
 
     @Override
     public String toString() {
@@ -104,7 +104,7 @@ public class Bullet extends GameObject {
 
 
     }
-
+    //for charging bullets
 //    public void setHeading(float x, float y, float angle) {
 //        this.x =x;
 //        this.y =y;
@@ -112,7 +112,23 @@ public class Bullet extends GameObject {
 //
 //    }
 
+
     public boolean isVisible() {
         return this.visible;
+    }
+    public BufferedImage getImage() {
+        return img;
+    }
+
+    public void setImage(BufferedImage img) {
+        this.img = img;
+    }
+
+    public void setDamage(int damage) {
+        this.damage = damage;
+    }
+
+    public int getDamage() {
+        return damage;
     }
 }

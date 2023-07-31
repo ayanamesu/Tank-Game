@@ -3,7 +3,7 @@ package tankrotationexample.game;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class powerup extends GameObject {
+public class powerup extends GameObject implements PowerUps{
     float x,y;
     BufferedImage img;
     private Rectangle hitbox;
@@ -24,5 +24,10 @@ public class powerup extends GameObject {
 
     public void drawImage(Graphics buffer) {
         buffer.drawImage(this.img, (int)x, (int)y, null);
+    }
+
+    @Override
+    public void applyPowerUp(Tank tank) {
+        tank.addDamageIncrease();
     }
 }
