@@ -22,6 +22,15 @@ public class Health extends GameObject {
 
     }
 
+    public void onCollected() {
+        // You can add any specific effects here if needed.
+        // For now, we can simply remove the health potion from the game.
+        // You can modify this part based on what you want to do when the health potion is collected.
+        this.x = -100; // Move the health potion off-screen to "delete" it from the game
+        this.y = -100;
+    }
+
+
     public void drawImage(Graphics buffer) {
         buffer.drawImage(this.img, (int)x, (int)y, null);
     }

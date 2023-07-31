@@ -27,6 +27,8 @@ public class Wall extends GameObject {
 
             if (this.hitbox.intersects(tankHitbox)) {
             }
+        } if (obj2 instanceof Bullet) {
+            obj2.collides(this);
         }
     }
     @Override
@@ -36,6 +38,9 @@ public class Wall extends GameObject {
 
     public void drawImage(Graphics buffer) {
         buffer.drawImage(this.img, (int)x, (int)y, null);
+        //test
+        buffer.setColor(Color.black);
+        buffer.drawRect(this.hitbox.x, this.hitbox.y, this.hitbox.width, this.hitbox.height);
     }
 
 

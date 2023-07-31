@@ -70,6 +70,7 @@ public class Bullet extends GameObject {
 
     }
 
+
     private void moveForwards() {
         x += Math.round(R * Math.cos(Math.toRadians(angle)));
         y += Math.round(R * Math.sin(Math.toRadians(angle)));
@@ -100,6 +101,7 @@ public class Bullet extends GameObject {
         rotation.scale(this.charge,this.charge);
         Graphics2D g2d = (Graphics2D) g;
         g2d.drawImage(this.img, rotation, null);
+
 
     }
 

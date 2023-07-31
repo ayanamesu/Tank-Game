@@ -28,6 +28,7 @@ public class GameWorld extends JPanel implements Runnable {
     private long tick = 0;
 
     List<GameObject> gobjs = new ArrayList<>(1000);
+    List<Wall> walls = new ArrayList<Wall>();
 
 
 
@@ -38,6 +39,8 @@ public class GameWorld extends JPanel implements Runnable {
         this.lf = lf;
     }
 
+
+
     @Override
     public void run() {
         try {
@@ -47,10 +50,13 @@ public class GameWorld extends JPanel implements Runnable {
                 this.t2.update();
                 this.checkCollision();
                 this.repaint();   // redraw game
+
+
                 /*
                  * Sleep for 1000/144 ms (~6.9ms). This is done to have our
                  * loop run at a fixed rate per/sec.
                  */
+
                 Thread.sleep(1000 / 144);
             }
         } catch (InterruptedException ignored) {
@@ -70,7 +76,9 @@ public class GameWorld extends JPanel implements Runnable {
                 if (obj2 instanceof  Tank) continue;
                 if(obj1.getHitbox().intersects(obj2.getHitbox())) {
                     obj1.collides(obj2);
+                    System.out.println(obj1 + " " + "Has hit" + " " + obj2);
                 }
+
             }
         }
     }
@@ -105,6 +113,7 @@ public class GameWorld extends JPanel implements Runnable {
          * 5 ---> speed
          * 6 ---> powerup
          */
+
         InputStreamReader isr = new InputStreamReader(Objects.requireNonNull(ResourceManager.class.getClassLoader().getResourceAsStream("maps/map1.csv")));
         try (BufferedReader mapReader = new BufferedReader(isr)) {
             int row = 0;
@@ -151,13 +160,17 @@ public class GameWorld extends JPanel implements Runnable {
         this.gobjs.forEach(gameObject -> gameObject.drawImage(buffer));
         this.t1.drawImage(buffer);
         this.t2.drawImage(buffer);
+
         g2.drawImage(world, 0, 0, null);
         // IF I TRY TO USE THIS BUFFERIMAGE for mm I GET A GIANT ERROR loop
 //        BufferedImage mm = world.getSubimage(0,0,GameConstants.GAME_WORLD_WIDTH, GameConstants.GAME_WORLD_HEIGHT);
         this.drawSplitScreen(world, g2);
         this.drawMiniMap(world, g2);
 
+
     }
+
+
 
     private void drawSplitScreen(BufferedImage world, Graphics2D g2) {
         int leftTankX = (int) t1.getX() - GameConstants.GAME_SCREEN_WIDTH / 4;

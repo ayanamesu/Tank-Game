@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 
-public class Tank extends GameObject {
+public class Tank extends GameObject implements PowerUps {
 
     private float x;
     private float y;
@@ -29,6 +29,7 @@ public class Tank extends GameObject {
     float fireDelay = 50f;
     float coolDown = 0f;
     float rateOfFire = 1f;
+    private float speed;
 
     private int health = 100;
     private int lives = 3;
@@ -57,7 +58,7 @@ public class Tank extends GameObject {
         this.img = img;
         this.angle = angle;
         this.isReverse = false;
-
+        this.isDead = false;
 
         this.hitbox= new Rectangle((int)x, (int)y, this.img.getWidth(), this.img.getHeight());
     }
@@ -75,6 +76,14 @@ public class Tank extends GameObject {
     void setX(float x){ this.x = x; }
 
     void setY(float y) { this. y = y;}
+
+    public float getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(float speed) {
+        this.speed = speed;
+    }
 
     void toggleUpPressed() {
         this.UpPressed = true;
@@ -251,7 +260,7 @@ public class Tank extends GameObject {
                     }
                 }
             }
-        }else if (with instanceof  Wall) {
+        } else if (with instanceof  Wall) {
             //idk if this should be it, skips through walls
             if(isReverse) {
                 this.moveForwards();
@@ -260,8 +269,11 @@ public class Tank extends GameObject {
             } checkBorder();
 
         } else if (with instanceof  BreakableWall) {
-            // add code here so that when breakable wall gets hit by a bullet from a tank and after 2 hits the wall breaks
-
+            if(isReverse) {
+                this.moveForwards();
+            } else {
+                this.moveBackwards();
+            } checkBorder();
 
         } else if (with instanceof  Tank) {
             if(isReverse) {
@@ -270,8 +282,16 @@ public class Tank extends GameObject {
                 this.moveBackwards();
             }
 
+        }  else if (with instanceof Health) {
+            if (this.health < 100) {
+                this.health += 50;
+                if (this.health > 100) {
+                    this.health = 100;
+                }
+                ((Health) with).onCollected();
+            }
         } else if (with instanceof  PowerUps) {
-            ((PowerUps)with).applyPowerUp(this);
+            ((speed)with).applyPowerUp(this);
         }
     }
 
@@ -288,5 +308,16 @@ public class Tank extends GameObject {
 
     public void unToggleShootPressed() {
         this.ShootPressed = false;
+    }
+
+    @Override
+    public void applyPowerUp(GameObject tank) {
+        if (tank instanceof Tank) {
+            Tank t = (Tank) tank;
+            // Apply power-up effect to the tank
+            // For example, increase the tank's speed and health
+            t.setSpeed(t.getSpeed() * 1.5f); // Increase speed by 50%
+
+        }
     }
 }
