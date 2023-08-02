@@ -7,6 +7,8 @@ import java.awt.*;
 
 public abstract class GameObject {
 
+    protected boolean hasCollided = false;
+
     public static GameObject newInstance(String type, float x, float y) {
         return switch (type) {
             case "9", "3" -> new Wall(x, y, ResourceManager.getSprite("ubwall"));
@@ -20,6 +22,10 @@ public abstract class GameObject {
 
     public abstract void drawImage(Graphics g);
     public abstract Rectangle getHitbox();
+
+    public boolean hasCollided () {
+        return hasCollided;
+    }
 
 
 

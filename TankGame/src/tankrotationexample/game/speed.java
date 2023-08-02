@@ -19,17 +19,19 @@ public class speed extends GameObject implements PowerUps{
 
     @Override
     public void collides(GameObject obj2) {
-
+        this.hasCollided = true;
     }
 
     public void drawImage(Graphics buffer) {
-        buffer.drawImage(this.img, (int)x, (int)y, null);
+        if(!hasCollided) {
+            buffer.drawImage(this.img, (int) x, (int) y, null);
+        }
     }
 
 
     @Override
     public void applyPowerUp(Tank tank) {
         tank.addSpeed();
-
+        collides(tank);
     }
 }

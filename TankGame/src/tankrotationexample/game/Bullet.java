@@ -24,22 +24,22 @@ public class Bullet extends GameObject {
 
     private Rectangle hitbox;
 
-    private boolean visible;
     private int damage;
-    private boolean hasCollided = false;
-    private boolean isDead;
 
 
-    public Bullet(float x, float y, float angle, BufferedImage img) {
+
+    public int tankID;
+
+
+    public Bullet(float x, float y, float angle, BufferedImage img,int tankID) {
         this.x = x;
         this.y = y;
         this.img = img;
         this.vx =0;
         this.vy = 0;
         this.angle = angle;
-        this.visible = true;
         this.damage = 2;
-        this.isDead = false;
+        this.tankID = tankID;
 
         this.hitbox= new Rectangle((int)x, (int)y, this.img.getWidth(), this.img.getHeight());
     }
@@ -51,20 +51,13 @@ public class Bullet extends GameObject {
 
 
     @Override
-    public void collides(GameObject obj2) {
-        if (hasCollided) {
-            return;
+    public void collides(GameObject with) {
+        if(with instanceof BreakableWall bW) {
+
+            bW.collides(this);
         }
 
-        if (obj2 instanceof Wall) {
-            this.visible = false;
-        }
-
-//        if (obj2 instanceof Tank) {
-//            ((Tank) obj2).getShot();
-//            this.visible = false;
-//        }
-
+//        System.out.println(hasCollided);
         hasCollided = true;
     }
 
@@ -78,13 +71,6 @@ public class Bullet extends GameObject {
         return this.y;
     }
 
-    public boolean isDead() {
-        return isDead;
-    }
-
-    public void setDead() {
-        isDead = true;
-    }
 
 
     void update() {
@@ -94,19 +80,17 @@ public class Bullet extends GameObject {
         y += vy;
         checkBorder();
         this.hitbox.setLocation((int)x,(int)y);
-        if (x < 0 || x >= GameConstants.GAME_WORLD_WIDTH || y < 0 || y >= GameConstants.GAME_WORLD_HEIGHT) {
-            isDead = true;
-        }
+
     }
 
 
 
     private void checkBorder() {
         if ((x < 30) || (x >= GameConstants.GAME_WORLD_WIDTH - 88)) {
-            this.visible = false;
+            this.hasCollided = true;
         }
         if ((y < 30) || (y >= GameConstants.GAME_WORLD_HEIGHT - 88)) {
-            this.visible = false;
+            this.hasCollided = true;
         }
 
 
@@ -118,22 +102,17 @@ public class Bullet extends GameObject {
     }
 
     public void drawImage(Graphics g) {
-        AffineTransform rotation = AffineTransform.getTranslateInstance(x, y);
-        rotation.rotate(Math.toRadians(angle), this.img.getWidth() / 2.0, this.img.getHeight() / 2.0);
-        rotation.scale(this.charge,this.charge);
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.drawImage(this.img, rotation, null);
+        if(!hasCollided) {
+            AffineTransform rotation = AffineTransform.getTranslateInstance(x, y);
+            rotation.rotate(Math.toRadians(angle), this.img.getWidth() / 2.0, this.img.getHeight() / 2.0);
+            rotation.scale(this.charge, this.charge);
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.drawImage(this.img, rotation, null);
+        }
 
 
     }
 
-
-
-
-
-    public boolean isVisible() {
-        return this.visible;
-    }
     public BufferedImage getImage() {
         return img;
     }

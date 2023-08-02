@@ -53,7 +53,15 @@ public class GameWorld extends JPanel implements Runnable {
                 this.t1.update(this); // update tank
                 this.t2.update(this);
                 this.anims.forEach(animation -> animation.update());
+//                System.out.println(this.gobjs.size());
                 this.checkCollision();
+                this.gobjs.removeIf(GameObject::hasCollided);
+
+                if(t1.isDead()|| t2.isDead()) {
+                    this.lf.setFrame("end");
+
+                    return;
+                }
 
                 this.repaint();   // redraw game
 
@@ -70,10 +78,11 @@ public class GameWorld extends JPanel implements Runnable {
         }
     }
 
+
     private void checkCollision() {
         for(int i = 0; i < this.gobjs.size(); i++) {
             GameObject obj1 = this.gobjs.get(i);
-            if (obj1 instanceof  BreakableWall || obj1 instanceof Wall || obj1 instanceof  Health || obj1 instanceof  speed || obj1 instanceof  powerup) {
+            if (obj1 instanceof  BreakableWall || obj1 instanceof Wall  || obj1 instanceof  PowerUps) {
                 continue;
             }
             for (int j = 0; j < this.gobjs.size(); j++) {
@@ -82,7 +91,7 @@ public class GameWorld extends JPanel implements Runnable {
                 if (obj2 instanceof  Tank) continue;
                 if(obj1.getHitbox().intersects(obj2.getHitbox())) {
                     obj1.collides(obj2);
-                    System.out.println(obj1 + " " + "Has hit" + " " + obj2);
+                 //   System.out.println(obj1 + " " + "Has hit" + " " + obj2);
                     if(obj1 instanceof Tank && obj2 instanceof PowerUps) {
                         ResourceManager.getSound("pickup").playSound();
                     }
@@ -152,11 +161,11 @@ public class GameWorld extends JPanel implements Runnable {
             throw new RuntimeException(e);
         }
 
-        t1 = new Tank(300, 600, 0, 0, (short) 0, ResourceManager.getSprite("tank1"));
+        t1 = new Tank(300, 600, 0, 0, (short) 0,1, ResourceManager.getSprite("tank1"),this);
         TankControl tc1 = new TankControl(t1, KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_SPACE);
         this.lf.getJf().addKeyListener(tc1);
 
-        t2 = new Tank(1800, 600, 0, 0, (short) 180, ResourceManager.getSprite("tank2"));
+        t2 = new Tank(1800, 600, 0, 0, (short) 180,2, ResourceManager.getSprite("tank2"),this);
         TankControl tc2 = new TankControl(t2, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_C);
         this.lf.getJf().addKeyListener(tc2);
 

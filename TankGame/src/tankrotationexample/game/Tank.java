@@ -50,7 +50,10 @@ public class Tank extends GameObject {
     private float initialY;
     private boolean hasReceivedPowerUp = false;
 
-    Tank(float x, float y, float vx, float vy, float angle, BufferedImage img) {
+    private int tankID;
+    GameWorld gw;
+
+    Tank(float x, float y, float vx, float vy, float angle, int tankID, BufferedImage img, GameWorld gw) {
         this.x = x;
         this.y = y;
         this.vx = vx;
@@ -61,6 +64,8 @@ public class Tank extends GameObject {
         this.isDead = false;
         this.initialX = x;
         this.initialY = y;
+        this.tankID = tankID;
+        this.gw = gw;
         this.hitbox= new Rectangle((int)x, (int)y, this.img.getWidth(), this.img.getHeight());
     }
     public Rectangle getHitbox() {
@@ -131,20 +136,14 @@ public class Tank extends GameObject {
         if (this.ShootPressed && ((this.timeSinceLastShot + this.cooldown) < System.currentTimeMillis())) {
             this.timeSinceLastShot = System.currentTimeMillis();
 //            this.ammo.add(new Bullet(x, y, angle, ResourceManager.getSprite("bullet")));
-            var b = new Bullet(x,y,angle,ResourceManager.getSprite("bullet"));
+            var b = new Bullet(x,y,angle,ResourceManager.getSprite("bullet"), tankID);
             this.ammo.add(b);
             gw.addGameObject(b);
             gw.anims.add(new Animation(x,y,ResourceManager.getAnimation("bulletshoot")));
             ResourceManager.getSound("shotfire").playSound();
         }
-        List<Bullet> bulletsToRemove = new ArrayList<>();
-        for (Bullet bullet : ammo) {
-            bullet.update();
-            if (bullet.isDead()) {
-                bulletsToRemove.add(bullet);
-            }
-        }
-        ammo.removeAll(bulletsToRemove);
+
+        ammo.removeIf(bullet -> bullet.hasCollided());
 
         this.ammo.forEach(bullet -> bullet.update());
         this.hitbox.setLocation((int)x,(int)y);
@@ -196,6 +195,9 @@ public class Tank extends GameObject {
 
 
     }
+    public boolean isDead() {
+        return isDead;
+    }
 
 
     @Override
@@ -238,31 +240,37 @@ public class Tank extends GameObject {
     }
 
     public void collides(GameObject with) {
-        if (with instanceof Bullet) {
+        if (with instanceof Bullet b && b.tankID !=tankID) {
+            b.hasCollided = true;
             if (!isDead) {
-                health -= 2;
+                health -= 50;
+                System.out.println(tankID);
                 if (health <= 0) {
                     isDead = true;
                     if (lives > 1) {
                         lives--;
                         respawn();
-                    } else {
-                        // display game over message
-                        System.out.println("Game Over");
                     }
                 }
 
             }
+
         } else if (with instanceof Wall || with instanceof BreakableWall || with instanceof Tank) {
-            if (isReverse) {
-                this.moveForwards();
-            } else {
-                this.moveBackwards();
-            }
+
+                if(UpPressed) {
+                    this.x -= vx;
+                    this.y -= vy;
+                }
+
+                if(DownPressed){
+                    this.x+=vx;
+                    this.y += vy;
+                }
+
             checkBorder();
         } else if (with instanceof PowerUps) {
             ((PowerUps) with).applyPowerUp(this);
-
+            gw.anims.add(new Animation(x,y,ResourceManager.getAnimation("powerpick")));
 
         }
     }
