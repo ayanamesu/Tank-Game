@@ -81,6 +81,20 @@ public class Tank extends GameObject {
 
     void setY(float y) { this. y = y;}
 
+    private float safeX() {
+        // Calculate the safe x-coordinate for bullets to start from
+        float tankCenterX = x + this.img.getWidth() / 5f;
+        float bulletXOffset = (float) (R * Math.cos(Math.toRadians(angle)));
+        return tankCenterX + bulletXOffset;
+    }
+
+    private float safeY() {
+        // Calculate the safe y-coordinate for bullets to start from
+        float tankCenterY = y + this.img.getHeight() / 2f;
+        float bulletYOffset = (float) (R * Math.sin(Math.toRadians(angle)));
+        return tankCenterY + bulletYOffset;
+    }
+
 
     public void resetHealth() {
         this.health = 100;
@@ -138,16 +152,18 @@ public class Tank extends GameObject {
         if (this.ShootPressed && ((this.timeSinceLastShot + this.cooldown) < System.currentTimeMillis())) {
             this.timeSinceLastShot = System.currentTimeMillis();
 //            this.ammo.add(new Bullet(x, y, angle, ResourceManager.getSprite("bullet")));
-            var b = new Bullet(x+50,y,angle,ResourceManager.getSprite("bullet"));
+            var b = new Bullet(safeX(),y,angle,ResourceManager.getSprite("bullet"));
             this.ammo.add(b);
             gw.addGameObject(b);
-            gw.anims.add(new Animation(x *50,y,ResourceManager.getAnimation("bulletshoot")));
+            gw.anims.add(new Animation(safeX(),y,ResourceManager.getAnimation("bulletshoot")));
+            ResourceManager.getSound("shotfire").playSound();
 
 
         }
 
         this.ammo.forEach(bullet -> bullet.update());
         this.hitbox.setLocation((int)x,(int)y);
+
     }
 
 
@@ -266,8 +282,7 @@ public class Tank extends GameObject {
                         lives--;
                         respawn();
                     } else {
-                        // Game Over logic goes here
-                        // For example, you can display a game over message or end the game
+                        // display game over message
                         System.out.println("Game Over");
                     }
                 }
@@ -282,6 +297,8 @@ public class Tank extends GameObject {
             checkBorder();
         } else if (with instanceof PowerUps) {
             ((PowerUps) with).applyPowerUp(this);
+
+
         }
     }
 
@@ -311,6 +328,7 @@ public class Tank extends GameObject {
             this.health += 25;
             hasReceivedPowerUp = true;
             System.out.println("Hp increase +25");
+
         }
         if(this.health >100) {
             this.health = 100;

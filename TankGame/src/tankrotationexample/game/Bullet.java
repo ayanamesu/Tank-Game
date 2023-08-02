@@ -40,6 +40,7 @@ public class Bullet extends GameObject {
 
         this.hitbox= new Rectangle((int)x, (int)y, this.img.getWidth(), this.img.getHeight());
     }
+
     public Rectangle getHitbox() {
         return this.hitbox.getBounds();
     }
@@ -54,10 +55,10 @@ public class Bullet extends GameObject {
             this.visible = false;
         }
 
-        if (obj2 instanceof Tank) {
-            ((Tank) obj2).getShot();
-            this.visible = false;
-        }
+//        if (obj2 instanceof Tank) {
+//            ((Tank) obj2).getShot();
+//            this.visible = false;
+//        }
 
         hasCollided = true;
     }
