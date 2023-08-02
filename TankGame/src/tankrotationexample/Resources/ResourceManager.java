@@ -4,13 +4,24 @@ import javax.imageio.ImageIO;
 import javax.sound.sampled.Clip;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 public class ResourceManager {
     private final static Map<String, BufferedImage> sprites = new HashMap();
-    private final static Map<String, List<BufferedImage>> animation = new HashMap<>();
     private final static Map<String, Clip> sounds = new HashMap<>();
+    private final static Map<String, List<BufferedImage>> animations = new HashMap<>();
+    private final static Map<String, Integer> animationInfo = new HashMap<>() {{
+        put("bullethit", 24);
+        put("bulletshoot", 24);
+        put("powerpick", 32);
+        put("puffsmoke", 32);
+        put("rocketflame", 16);
+        put("rockethit", 32);
+
+    }};
+
 
     private static BufferedImage loadSprites(String path) throws IOException {
         return ImageIO.read(ResourceManager.class.getClassLoader().getResource(path));
@@ -63,6 +74,7 @@ public class ResourceManager {
 
     public static void loadResources() {
         ResourceManager.initSprites();
+        ResourceManager.initAnimations();
 //        ResourceManager.initSounds();
     }
 
@@ -72,6 +84,30 @@ public class ResourceManager {
             throw new RuntimeException("%s is missing from sprite resources".formatted(type));
         }
         return ResourceManager.sprites.get(type);
+    }
+    public static List<BufferedImage> getAnimation(String type) {
+        return ResourceManager.animations.get(type);
+    }
+
+    private static void initAnimations() {
+        String baseName = "animations/%s/%s_%04d.png";
+        animationInfo.forEach((animationName, frameCount) -> {
+            List<BufferedImage> frames = new ArrayList<>();
+            try {
+                for (int i = 0; i < frameCount; i++) {
+                    String spritePath = baseName.formatted(animationName, animationName, i);
+                    frames.add(loadSprites(spritePath));
+                }
+                ResourceManager.animations.put(animationName, frames);
+            } catch (IOException e) {
+                System.out.println(e);
+                    throw new RuntimeException(e);
+            }
+            });
+
+        }
+    public static void main(String[] args) {
+        ResourceManager.loadResources();
     }
 
     //Maybe Wrong
