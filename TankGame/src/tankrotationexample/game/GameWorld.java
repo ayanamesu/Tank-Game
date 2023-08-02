@@ -87,6 +87,7 @@ public class GameWorld extends JPanel implements Runnable {
                         ResourceManager.getSound("pickup").playSound();
                     }
 
+
                 }
 
             }
