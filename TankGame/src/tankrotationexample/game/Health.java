@@ -1,5 +1,7 @@
 package tankrotationexample.game;
 
+import tankrotationexample.Resources.ResourceManager;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -21,6 +23,7 @@ public class Health extends GameObject implements PowerUps {
     @Override
     public void collides(GameObject obj2) {
 
+
     }
 
 
@@ -34,5 +37,6 @@ public class Health extends GameObject implements PowerUps {
     @Override
     public void applyPowerUp(Tank tank) {
         tank.addHealth();
+
     }
 }

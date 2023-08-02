@@ -5,6 +5,7 @@ import tankrotationexample.GameConstants;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 public class Bullet extends GameObject {
 
@@ -25,6 +26,7 @@ public class Bullet extends GameObject {
 
     private boolean visible;
     private int damage;
+    private boolean hasCollided = false;
 
     public Bullet(float x, float y, float angle, BufferedImage img) {
         this.x = x;
@@ -38,21 +40,27 @@ public class Bullet extends GameObject {
 
         this.hitbox= new Rectangle((int)x, (int)y, this.img.getWidth(), this.img.getHeight());
     }
+
     public Rectangle getHitbox() {
         return this.hitbox.getBounds();
     }
 
     @Override
     public void collides(GameObject obj2) {
-        if(obj2 instanceof Wall) {
+        if (hasCollided) {
+            return; // Skip further collisions if the bullet has already collided
+        }
+
+        if (obj2 instanceof Wall) {
             this.visible = false;
         }
 
-        if(obj2 instanceof Tank) {
+//        if (obj2 instanceof Tank) {
+//            ((Tank) obj2).getShot();
+//            this.visible = false;
+//        }
 
-            ((Tank) obj2).getShot();
-            this.visible = false;
-        }
+        hasCollided = true;
     }
 
     public void increaseCharge() {
@@ -104,13 +112,18 @@ public class Bullet extends GameObject {
 
 
     }
-    //for charging bullets
-//    public void setHeading(float x, float y, float angle) {
-//        this.x =x;
-//        this.y =y;
-//        this.angle = angle;
-//
-//    }
+    public void checkCollisionWithWall(List<GameObject> walls) {
+        for (GameObject wall : walls) {
+            if (wall instanceof Wall) {
+                if (this.hitbox.intersects(wall.getHitbox())) {
+                    this.visible = false; // Set the bullet to be invisible when it collides with a wall
+                    return; // No need to check other walls if the bullet is already invisible
+                }
+            }
+        }
+    }
+
+
 
 
     public boolean isVisible() {

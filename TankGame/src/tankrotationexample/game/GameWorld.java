@@ -28,8 +28,9 @@ public class GameWorld extends JPanel implements Runnable {
     private long tick = 0;
 
     List<GameObject> gobjs = new ArrayList<>(1000);
-
-
+    List<Animation> anims = new ArrayList<>();
+    private List<Bullet> bulletsCollided = new ArrayList<>();
+    Sound bg = ResourceManager.getSound("bgs");
 
 
     /**
@@ -44,11 +45,16 @@ public class GameWorld extends JPanel implements Runnable {
     @Override
     public void run() {
         try {
+
+            bg.setLooping();
+            bg.playSound();
             while (true) {
                 this.tick++;
-                this.t1.update(); // update tank
-                this.t2.update();
+                this.t1.update(this); // update tank
+                this.t2.update(this);
+                this.anims.forEach(animation -> animation.update());
                 this.checkCollision();
+
                 this.repaint();   // redraw game
 
 
@@ -77,12 +83,17 @@ public class GameWorld extends JPanel implements Runnable {
                 if(obj1.getHitbox().intersects(obj2.getHitbox())) {
                     obj1.collides(obj2);
                     System.out.println(obj1 + " " + "Has hit" + " " + obj2);
+                    if(obj1 instanceof Tank && obj2 instanceof PowerUps) {
+                        ResourceManager.getSound("pickup").playSound();
+                    }
 
                 }
 
             }
         }
     }
+
+
 
 
     /**
@@ -117,6 +128,12 @@ public class GameWorld extends JPanel implements Runnable {
          */
 
         InputStreamReader isr = new InputStreamReader(Objects.requireNonNull(ResourceManager.class.getClassLoader().getResourceAsStream("maps/map1.csv")));
+//        this.anims.add(new Animation(300,300,ResourceManager.getAnimation("bullethit")));
+//        this.anims.add(new Animation(350,300,ResourceManager.getAnimation("bulletshoot")));
+//        this.anims.add(new Animation(400,300,ResourceManager.getAnimation("powerpick")));
+//        this.anims.add(new Animation(450,300,ResourceManager.getAnimation("puffsmoke")));
+//        this.anims.add(new Animation(500,300,ResourceManager.getAnimation("rocketflame")));
+//        this.anims.add(new Animation(550,300,ResourceManager.getAnimation("rockethit")));
         try (BufferedReader mapReader = new BufferedReader(isr)) {
             int row = 0;
             String[] gameItems;
@@ -145,6 +162,8 @@ public class GameWorld extends JPanel implements Runnable {
         this.gobjs.add(t1);this.gobjs.add(t2);
     }
 
+
+
     private void drawFloor(Graphics2D buffer) {
         BufferedImage floor = ResourceManager.getSprite("bg");
         for (int i = 0; i < GameConstants.GAME_WORLD_WIDTH; i += 320) {
@@ -162,7 +181,7 @@ public class GameWorld extends JPanel implements Runnable {
         this.gobjs.forEach(gameObject -> gameObject.drawImage(buffer));
         this.t1.drawImage(buffer);
         this.t2.drawImage(buffer);
-
+        this.anims.forEach(animation -> animation.drawImage(buffer));
         g2.drawImage(world, 0, 0, null);
         // IF I TRY TO USE THIS BUFFERIMAGE for mm I GET A GIANT ERROR loop
 //        BufferedImage mm = world.getSubimage(0,0,GameConstants.GAME_WORLD_WIDTH, GameConstants.GAME_WORLD_HEIGHT);
@@ -205,5 +224,10 @@ public class GameWorld extends JPanel implements Runnable {
         g2.drawImage(minimap,
                 (GameConstants.GAME_SCREEN_WIDTH * 5)/2- (GameConstants.GAME_WORLD_WIDTH )/2,
                 (GameConstants.GAME_SCREEN_HEIGHT * 5) - (GameConstants.GAME_WORLD_HEIGHT)-190, null);
+    }
+
+
+    public void addGameObject(GameObject obj) {
+        this.gobjs.add(obj);
     }
 }

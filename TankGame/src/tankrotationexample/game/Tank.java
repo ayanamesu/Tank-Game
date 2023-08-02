@@ -25,9 +25,9 @@ public class Tank extends GameObject {
     List<Bullet> ammo = new ArrayList<>();
     long timeSinceLastShot = 0L;
     long cooldown = 2000;
-    Bullet currentChargeBullet = null;
 
-    private float speed;
+
+
 
     private int health = 100;
     private int lives = 3;
@@ -47,6 +47,7 @@ public class Tank extends GameObject {
     private boolean isReverse;
     private float initialX;
     private float initialY;
+    private boolean hasReceivedPowerUp = false;
 
     Tank(float x, float y, float vx, float vy, float angle, BufferedImage img) {
         this.x = x;
@@ -57,10 +58,8 @@ public class Tank extends GameObject {
         this.angle = angle;
         this.isReverse = false;
         this.isDead = false;
-        this.speed = 1.0f;
-
-
-
+        this.initialX = x;
+        this.initialY = y;
         this.hitbox= new Rectangle((int)x, (int)y, this.img.getWidth(), this.img.getHeight());
     }
     public Rectangle getHitbox() {
@@ -79,7 +78,6 @@ public class Tank extends GameObject {
     void setY(float y) { this. y = y;}
 
 
-    public void resetHealth() { this.health = 100; }
 
     void toggleUpPressed() {
         this.UpPressed = true;
@@ -113,7 +111,7 @@ public class Tank extends GameObject {
         this.LeftPressed = false;
     }
 
-    void update() {
+    void update(GameWorld gw) {
         if (this.UpPressed) {
             this.moveForwards();
         }
@@ -131,34 +129,22 @@ public class Tank extends GameObject {
         }
 
         if (this.ShootPressed && ((this.timeSinceLastShot + this.cooldown) < System.currentTimeMillis())) {
-            //instead of chargedBullet make it so that if u hold spacebar it shoot another type of bullet "star2"?
-//            if (this.currentChargeBullet == null) {
-//                this.currentChargeBullet = new Bullet(x, y, angle, ResourceManager.getSprite("star2"));
-//            } else {
-//                this.currentChargeBullet.increaseCharge();
-//                this.currentChargeBullet.setHeading(x, y, angle);
-//            }
-//        } else {
-//                if(this.currentChargeBullet != null) {
-//                    this.ammo.add(this.currentChargeBullet);
-//                    this.timeSinceLastShot = System.currentTImeMillis();
-//                    this.currentChargeBullet = null;
-//
-//                }
-//            }
             this.timeSinceLastShot = System.currentTimeMillis();
-            this.ammo.add(new Bullet(x, y, angle, ResourceManager.getSprite("bullet")));
-
-
-
+//            this.ammo.add(new Bullet(x, y, angle, ResourceManager.getSprite("bullet")));
+            var b = new Bullet(x,y,angle,ResourceManager.getSprite("bullet"));
+            this.ammo.add(b);
+            gw.addGameObject(b);
+            gw.anims.add(new Animation(x,y,ResourceManager.getAnimation("bulletshoot")));
+            ResourceManager.getSound("shotfire").playSound();
         }
+
+
+
         this.ammo.forEach(bullet -> bullet.update());
         this.hitbox.setLocation((int)x,(int)y);
+
+
     }
-
-
-
-
 
     private void rotateLeft() {
         this.angle -= this.ROTATIONSPEED;
@@ -203,23 +189,7 @@ public class Tank extends GameObject {
 
 
     }
-    public void getShot() {
-        this.health -= 11;
 
-        if (this.health <= 0) {
-            this.resetHealth();
-            this.lives -= 1;
-        }
-
-        if(this.lives <= 0) {
-            this.isDead = true;
-        }
-
-    }
-
-    public boolean getIsDead() {
-        return this.isDead;
-    }
 
     @Override
     public String toString() {
@@ -231,9 +201,7 @@ public class Tank extends GameObject {
         AffineTransform rotation = AffineTransform.getTranslateInstance(x, y);
         rotation.rotate(Math.toRadians(angle), this.img.getWidth() / 2.0, this.img.getHeight() / 2.0);
         Graphics2D g2d = (Graphics2D) g;
-        if(this.currentChargeBullet != null) {
-            this.currentChargeBullet.drawImage(g2d);
-        }
+
         this.ammo.forEach(b ->b.drawImage(g2d));
         g2d.setColor(Color.CYAN);
         g2d.drawRect((int)x-25,(int)y-20, 100, 10);
@@ -263,53 +231,45 @@ public class Tank extends GameObject {
     }
 
     public void collides(GameObject with) {
-//        if (with instanceof Bullet) {
-//            //lose Life does not work because bullet not in GameObject
-//            if (!isDead) {
-//                health -= 25;
-//                if (health <= 0) {
-//                    isDead = true;
-//                    lives--;
-//                    if (lives > 0) {
-//                        respawn();
-//                    } else {
-//                        System.out.println("Game Over");
-//                    }
-//                }
-//            }
-//        }
-         if (with instanceof  Wall) {
-            //idk if this should be it, skips through walls
-            if(isReverse) {
-                this.moveForwards();
-            } else {
-                this.moveBackwards();
-            } checkBorder();
+        if (with instanceof Bullet) {
+            if (!isDead) {
+                health -= 15;
+                if (health <= 0) {
+                    isDead = true;
+                    if (lives > 1) {
+                        lives--;
+                        respawn();
+                    } else {
+                        // display game over message
+                        System.out.println("Game Over");
+                    }
+                }
 
-        } else if (with instanceof  BreakableWall) {
-            if(isReverse) {
-                this.moveForwards();
-            } else {
-                this.moveBackwards();
-            } checkBorder();
-
-        } else if (with instanceof  Tank) {
-            if(isReverse) {
+            }
+        } else if (with instanceof Wall || with instanceof BreakableWall || with instanceof Tank) {
+            if (isReverse) {
                 this.moveForwards();
             } else {
                 this.moveBackwards();
             }
+            checkBorder();
+        } else if (with instanceof PowerUps) {
+            ((PowerUps) with).applyPowerUp(this);
 
-        } else if (with instanceof  PowerUps) {
-            ((PowerUps)with).applyPowerUp(this);
+
         }
     }
 
     private void respawn() {
-        health = 100;
-        x = initialX;
-        y = initialY;
+        this.x = initialX;
+        this.y = initialY;
+        this.health = 100;
+        this.isDead = false;
+        hasReceivedPowerUp = false;
     }
+
+
+
 
 
     public void toggleShootPressed() {
@@ -322,22 +282,32 @@ public class Tank extends GameObject {
 
 
     public void addHealth() {
-        this.health += 25;
-        System.out.println("Hp increase +25");
+        if (!hasReceivedPowerUp) {
+            this.health += 25;
+            hasReceivedPowerUp = true;
+            System.out.println("Hp increase +25");
+
+        }
         if(this.health >100) {
             this.health = 100;
         }
     }
     public void addSpeed() {
-        this.speed *= 0.5f;
-        System.out.println("speed");
-    }
-
-    public void addDamageIncrease() {
-        for (Bullet bullet : ammo) {
-            bullet.setImage(ResourceManager.getSprite("star2"));
-            bullet.setDamage(bullet.getDamage() + 10);
+        if (!hasReceivedPowerUp) {
+            this.R *= 1.05f;
+            hasReceivedPowerUp = true;
+            System.out.println("speed");
         }
     }
 
+    //figure this out later or scrap it
+    public void addDamageIncrease() {
+        if (!hasReceivedPowerUp) {
+            for (Bullet bullet : ammo) {
+                bullet.setImage(ResourceManager.getSprite("star2"));
+                bullet.setDamage(bullet.getDamage() + 10);
+            }
+            hasReceivedPowerUp = true;
+        }
+    }
 }

@@ -30,5 +30,6 @@ public class speed extends GameObject implements PowerUps{
     @Override
     public void applyPowerUp(Tank tank) {
         tank.addSpeed();
+
     }
 }
