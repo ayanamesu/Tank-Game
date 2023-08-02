@@ -1,7 +1,6 @@
-<<<<<<< HEAD
-package tankrotationexample.game;public class Sound {
-=======
+
 package tankrotationexample.game;
+
 
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
@@ -33,5 +32,4 @@ public class Sound {
         volume.setValue(20.0f * (float)Math.log10(level));
     }
 
->>>>>>> ee3f1cdc6506251a9173ba0fc75afbbfc7d2e733
 }
