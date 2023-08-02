@@ -25,7 +25,7 @@ public class Tank extends GameObject {
     List<Bullet> ammo = new ArrayList<>();
     long timeSinceLastShot = 0L;
     long cooldown = 2000;
-    Bullet currentChargeBullet = null;
+
 
 
 
@@ -81,24 +81,7 @@ public class Tank extends GameObject {
 
     void setY(float y) { this. y = y;}
 
-    private float safeX() {
-        // Calculate the safe x-coordinate for bullets to start from
-        float tankCenterX = x + this.img.getWidth() / 5f;
-        float bulletXOffset = (float) (R * Math.cos(Math.toRadians(angle)));
-        return tankCenterX + bulletXOffset;
-    }
 
-    private float safeY() {
-        // Calculate the safe y-coordinate for bullets to start from
-        float tankCenterY = y + this.img.getHeight() / 2f;
-        float bulletYOffset = (float) (R * Math.sin(Math.toRadians(angle)));
-        return tankCenterY + bulletYOffset;
-    }
-
-
-    public void resetHealth() {
-        this.health = 100;
-    }
 
     void toggleUpPressed() {
         this.UpPressed = true;
@@ -152,23 +135,20 @@ public class Tank extends GameObject {
         if (this.ShootPressed && ((this.timeSinceLastShot + this.cooldown) < System.currentTimeMillis())) {
             this.timeSinceLastShot = System.currentTimeMillis();
 //            this.ammo.add(new Bullet(x, y, angle, ResourceManager.getSprite("bullet")));
-            var b = new Bullet(safeX(),y,angle,ResourceManager.getSprite("bullet"));
+            var b = new Bullet(x,y,angle,ResourceManager.getSprite("bullet"));
             this.ammo.add(b);
             gw.addGameObject(b);
-            gw.anims.add(new Animation(safeX(),y,ResourceManager.getAnimation("bulletshoot")));
+            gw.anims.add(new Animation(x,y,ResourceManager.getAnimation("bulletshoot")));
             ResourceManager.getSound("shotfire").playSound();
-
-
         }
+
+
 
         this.ammo.forEach(bullet -> bullet.update());
         this.hitbox.setLocation((int)x,(int)y);
 
+
     }
-
-
-
-
 
     private void rotateLeft() {
         this.angle -= this.ROTATIONSPEED;
@@ -213,23 +193,7 @@ public class Tank extends GameObject {
 
 
     }
-    public void getShot() {
-        this.health -= 15;
 
-        if (this.health <= 0) {
-            this.resetHealth();
-            this.lives -= 1;
-        }
-
-        if(this.lives <= 0) {
-            this.isDead = true;
-        }
-
-    }
-
-    public boolean getIsDead() {
-        return this.isDead;
-    }
 
     @Override
     public String toString() {
@@ -241,9 +205,7 @@ public class Tank extends GameObject {
         AffineTransform rotation = AffineTransform.getTranslateInstance(x, y);
         rotation.rotate(Math.toRadians(angle), this.img.getWidth() / 2.0, this.img.getHeight() / 2.0);
         Graphics2D g2d = (Graphics2D) g;
-        if(this.currentChargeBullet != null) {
-            this.currentChargeBullet.drawImage(g2d);
-        }
+
         this.ammo.forEach(b ->b.drawImage(g2d));
         g2d.setColor(Color.CYAN);
         g2d.drawRect((int)x-25,(int)y-20, 100, 10);
@@ -344,10 +306,12 @@ public class Tank extends GameObject {
 
     //figure this out later or scrap it
     public void addDamageIncrease() {
-        for (Bullet bullet : ammo) {
-            bullet.setImage(ResourceManager.getSprite("star2"));
-            bullet.setDamage(bullet.getDamage() + 10);
+        if (!hasReceivedPowerUp) {
+            for (Bullet bullet : ammo) {
+                bullet.setImage(ResourceManager.getSprite("star2"));
+                bullet.setDamage(bullet.getDamage() + 10);
+            }
+            hasReceivedPowerUp = true;
         }
     }
-
 }

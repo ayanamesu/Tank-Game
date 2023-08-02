@@ -85,7 +85,6 @@ public class GameWorld extends JPanel implements Runnable {
                     System.out.println(obj1 + " " + "Has hit" + " " + obj2);
                     if(obj1 instanceof Tank && obj2 instanceof PowerUps) {
                         ResourceManager.getSound("pickup").playSound();
-
                     }
 
                 }
@@ -93,33 +92,7 @@ public class GameWorld extends JPanel implements Runnable {
             }
         }
     }
-//        for (int i = 0; i < this.gobjs.size(); i++) {
-//            GameObject obj1 = this.gobjs.get(i);
-//            if (obj1 instanceof BreakableWall || obj1 instanceof Wall || obj1 instanceof Health || obj1 instanceof speed || obj1 instanceof powerup) {
-//                continue;
-//            }
-//            for (int j = 0; j < this.gobjs.size(); j++) {
-//                if (i == j) continue;
-//                GameObject obj2 = this.gobjs.get(j);
-//                if (obj2 instanceof Tank) continue;
-//
-//
-//                if (obj1 instanceof Bullet && bulletsCollided.contains(obj1)) {
-//                    continue;
-//                }
-//
-//                if (obj1.getHitbox().intersects(obj2.getHitbox())) {
-//                    obj1.collides(obj2);
-//                    System.out.println(obj1 + " Has hit " + obj2);
-//
-//
-//                    if (obj1 instanceof Bullet) {
-//                        bulletsCollided.add((Bullet) obj1);
-//                    }
-//                }
-//            }
-//        }
-//    }
+
 
 
 
@@ -155,12 +128,12 @@ public class GameWorld extends JPanel implements Runnable {
          */
 
         InputStreamReader isr = new InputStreamReader(Objects.requireNonNull(ResourceManager.class.getClassLoader().getResourceAsStream("maps/map1.csv")));
-        this.anims.add(new Animation(300,300,ResourceManager.getAnimation("bullethit")));
-        this.anims.add(new Animation(350,300,ResourceManager.getAnimation("bulletshoot")));
-        this.anims.add(new Animation(400,300,ResourceManager.getAnimation("powerpick")));
-        this.anims.add(new Animation(450,300,ResourceManager.getAnimation("puffsmoke")));
-        this.anims.add(new Animation(500,300,ResourceManager.getAnimation("rocketflame")));
-        this.anims.add(new Animation(550,300,ResourceManager.getAnimation("rockethit")));
+//        this.anims.add(new Animation(300,300,ResourceManager.getAnimation("bullethit")));
+//        this.anims.add(new Animation(350,300,ResourceManager.getAnimation("bulletshoot")));
+//        this.anims.add(new Animation(400,300,ResourceManager.getAnimation("powerpick")));
+//        this.anims.add(new Animation(450,300,ResourceManager.getAnimation("puffsmoke")));
+//        this.anims.add(new Animation(500,300,ResourceManager.getAnimation("rocketflame")));
+//        this.anims.add(new Animation(550,300,ResourceManager.getAnimation("rockethit")));
         try (BufferedReader mapReader = new BufferedReader(isr)) {
             int row = 0;
             String[] gameItems;
