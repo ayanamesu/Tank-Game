@@ -26,7 +26,8 @@ public class Tank extends GameObject {
     long timeSinceLastShot = 0L;
     long cooldown = 2000;
 
-
+    private float safeX;
+    private float safeY;
 
 
     private int health = 100;
@@ -76,7 +77,6 @@ public class Tank extends GameObject {
     void setX(float x){ this.x = x; }
 
     void setY(float y) { this. y = y;}
-
 
 
     void toggleUpPressed() {
@@ -137,14 +137,21 @@ public class Tank extends GameObject {
             gw.anims.add(new Animation(x,y,ResourceManager.getAnimation("bulletshoot")));
             ResourceManager.getSound("shotfire").playSound();
         }
-
-
+        List<Bullet> bulletsToRemove = new ArrayList<>();
+        for (Bullet bullet : ammo) {
+            bullet.update();
+            if (bullet.isDead()) {
+                bulletsToRemove.add(bullet);
+            }
+        }
+        ammo.removeAll(bulletsToRemove);
 
         this.ammo.forEach(bullet -> bullet.update());
         this.hitbox.setLocation((int)x,(int)y);
 
 
     }
+
 
     private void rotateLeft() {
         this.angle -= this.ROTATIONSPEED;
@@ -233,7 +240,7 @@ public class Tank extends GameObject {
     public void collides(GameObject with) {
         if (with instanceof Bullet) {
             if (!isDead) {
-                health -= 15;
+                health -= 2;
                 if (health <= 0) {
                     isDead = true;
                     if (lives > 1) {

@@ -27,6 +27,8 @@ public class Bullet extends GameObject {
     private boolean visible;
     private int damage;
     private boolean hasCollided = false;
+    private boolean isDead;
+
 
     public Bullet(float x, float y, float angle, BufferedImage img) {
         this.x = x;
@@ -36,7 +38,8 @@ public class Bullet extends GameObject {
         this.vy = 0;
         this.angle = angle;
         this.visible = true;
-        this.damage = 15;
+        this.damage = 2;
+        this.isDead = false;
 
         this.hitbox= new Rectangle((int)x, (int)y, this.img.getWidth(), this.img.getHeight());
     }
@@ -45,10 +48,12 @@ public class Bullet extends GameObject {
         return this.hitbox.getBounds();
     }
 
+
+
     @Override
     public void collides(GameObject obj2) {
         if (hasCollided) {
-            return; // Skip further collisions if the bullet has already collided
+            return;
         }
 
         if (obj2 instanceof Wall) {
@@ -63,9 +68,7 @@ public class Bullet extends GameObject {
         hasCollided = true;
     }
 
-    public void increaseCharge() {
-        this.charge = this.charge + 0.05f;
-    }
+
 
     public float getX() {
         return this.x;
@@ -73,6 +76,14 @@ public class Bullet extends GameObject {
 
     public float getY() {
         return this.y;
+    }
+
+    public boolean isDead() {
+        return isDead;
+    }
+
+    public void setDead() {
+        isDead = true;
     }
 
 
@@ -83,6 +94,9 @@ public class Bullet extends GameObject {
         y += vy;
         checkBorder();
         this.hitbox.setLocation((int)x,(int)y);
+        if (x < 0 || x >= GameConstants.GAME_WORLD_WIDTH || y < 0 || y >= GameConstants.GAME_WORLD_HEIGHT) {
+            isDead = true;
+        }
     }
 
 
@@ -112,16 +126,7 @@ public class Bullet extends GameObject {
 
 
     }
-    public void checkCollisionWithWall(List<GameObject> walls) {
-        for (GameObject wall : walls) {
-            if (wall instanceof Wall) {
-                if (this.hitbox.intersects(wall.getHitbox())) {
-                    this.visible = false; // Set the bullet to be invisible when it collides with a wall
-                    return; // No need to check other walls if the bullet is already invisible
-                }
-            }
-        }
-    }
+
 
 
 
