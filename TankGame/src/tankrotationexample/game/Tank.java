@@ -60,10 +60,6 @@ public class Tank extends GameObject {
         this.isDead = false;
         this.initialX = x;
         this.initialY = y;
-
-
-
-
         this.hitbox= new Rectangle((int)x, (int)y, this.img.getWidth(), this.img.getHeight());
     }
     public Rectangle getHitbox() {

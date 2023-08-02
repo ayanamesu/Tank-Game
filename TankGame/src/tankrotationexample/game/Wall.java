@@ -21,15 +21,7 @@ public class Wall extends GameObject {
 
     @Override
     public void collides(GameObject obj2) {
-        if (obj2 instanceof Tank) {
-            Tank tank = (Tank) obj2;
-            Rectangle tankHitbox = tank.getHitbox();
 
-            if (this.hitbox.intersects(tankHitbox)) {
-            }
-        } if (obj2 instanceof Bullet) {
-            obj2.collides(this);
-        }
     }
     @Override
     public String toString() {
@@ -39,8 +31,8 @@ public class Wall extends GameObject {
     public void drawImage(Graphics buffer) {
         buffer.drawImage(this.img, (int)x, (int)y, null);
         //test
-        buffer.setColor(Color.black);
-        buffer.drawRect(this.hitbox.x, this.hitbox.y, this.hitbox.width, this.hitbox.height);
+//        buffer.setColor(Color.black);
+//        buffer.drawRect(this.hitbox.x, this.hitbox.y, this.hitbox.width, this.hitbox.height);
     }
 
 
