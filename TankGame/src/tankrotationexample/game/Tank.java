@@ -51,7 +51,7 @@ public class Tank extends GameObject {
     private boolean hasReceivedPowerUp = false;
 
     private int tankID;
-    GameWorld gw;
+    private GameWorld gw;
 
     Tank(float x, float y, float vx, float vy, float angle, int tankID, BufferedImage img, GameWorld gw) {
         this.x = x;
