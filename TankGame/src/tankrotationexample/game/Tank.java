@@ -243,7 +243,7 @@ public class Tank extends GameObject {
         if (with instanceof Bullet b && b.tankID !=tankID) {
             b.hasCollided = true;
             if (!isDead) {
-                health -= 50;
+                health -= 25;
                 System.out.println(tankID);
                 if (health <= 0) {
                     isDead = true;
@@ -316,12 +316,9 @@ public class Tank extends GameObject {
     }
 
     //figure this out later or scrap it
-    public void addDamageIncrease() {
+    public void shield() {
         if (!hasReceivedPowerUp) {
-            for (Bullet bullet : ammo) {
-                bullet.setImage(ResourceManager.getSprite("star2"));
-                bullet.setDamage(bullet.getDamage() + 10);
-            }
+
             hasReceivedPowerUp = true;
         }
     }
