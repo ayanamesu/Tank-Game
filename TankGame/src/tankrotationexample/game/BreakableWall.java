@@ -25,9 +25,10 @@ public class BreakableWall extends GameObject {
     public void collides(GameObject obj2) {
         if (obj2 instanceof Bullet) {
             health -= 25;
-            if(this.health < 35) {
+            if(this.health < 50) {
                 this.img = ResourceManager.getSprite("bwall2");
-            } if (this.health == 0) {
+            }
+            if (this.health == 0) {
                 hasCollided = true;
             }
         }

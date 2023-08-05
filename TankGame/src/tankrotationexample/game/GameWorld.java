@@ -29,7 +29,6 @@ public class GameWorld extends JPanel implements Runnable {
 
     List<GameObject> gobjs = new ArrayList<>(1000);
     List<Animation> anims = new ArrayList<>();
-    private List<Bullet> bulletsCollided = new ArrayList<>();
     Sound bg = ResourceManager.getSound("bgs");
 
 
