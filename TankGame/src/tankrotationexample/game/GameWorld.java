@@ -44,8 +44,8 @@ public class GameWorld extends JPanel implements Runnable {
 
     @Override
     public void run() {
+        resetGame();
         try {
-
             bg.setLooping();
             bg.playSound();
             while (true) {
@@ -58,11 +58,10 @@ public class GameWorld extends JPanel implements Runnable {
                 this.gobjs.removeIf(GameObject::hasCollided);
 
                 if(t1.isDead()|| t2.isDead()) {
-                   if(winnerFound){
-
-                    }
+                    bg.stop();
                     this.lf.setFrame("end");
                     return;
+
 
                 }
 
@@ -78,7 +77,8 @@ public class GameWorld extends JPanel implements Runnable {
             }
         } catch (InterruptedException ignored) {
             System.out.println(ignored);
-        }
+        } this.resetGame();
+
     }
 
 
@@ -114,31 +114,10 @@ public class GameWorld extends JPanel implements Runnable {
      */
     public void resetGame() {
         this.tick = 0;
-        this.t1.setX(300);
-        this.t1.setY(300);
-    }
-
-    /**
-     * Load all resources for Tank Wars Game. Set all Game Objects to their
-     * initial state as well.
-     */
-    public void InitializeGame() {
-        this.world = new BufferedImage(GameConstants.GAME_WORLD_WIDTH,
-                GameConstants.GAME_WORLD_HEIGHT,
-                BufferedImage.TYPE_INT_RGB);
-        //Sound
-//        Clip musicTheme = ResourceManager.getSound("Music.mp3");
-
-
-        /**
-         * 0 ---> nothing
-         * 9 ---> unbreakables But non-collidable
-         * 3 ---> unbreakables
-         * 2 ---> breakables
-         * 4 ---> health
-         * 5 ---> speed
-         * 6 ---> powerup
-         */
+        this.gobjs.clear();
+        this.initializeTanks();
+        this.t1.resetTank();
+        this.t2.resetTank();
 
         InputStreamReader isr = new InputStreamReader(Objects.requireNonNull(ResourceManager.class.getClassLoader().getResourceAsStream("maps/map1.csv")));
         try (BufferedReader mapReader = new BufferedReader(isr)) {
@@ -158,6 +137,55 @@ public class GameWorld extends JPanel implements Runnable {
             throw new RuntimeException(e);
         }
 
+    }
+
+    /**
+     * Load all resources for Tank Wars Game. Set all Game Objects to their
+     * initial state as well.
+     */
+    public void InitializeGame() {
+        this.world = new BufferedImage(GameConstants.GAME_WORLD_WIDTH,
+                GameConstants.GAME_WORLD_HEIGHT,
+                BufferedImage.TYPE_INT_RGB);
+        /**
+         * 0 ---> nothing
+         * 9 ---> unbreakables But non-collidable
+         * 3 ---> unbreakables
+         * 2 ---> breakables
+         * 4 ---> health
+         * 5 ---> speed
+         * 6 ---> powerup
+         */
+        InputStreamReader isr = new InputStreamReader(Objects.requireNonNull(ResourceManager.class.getClassLoader().getResourceAsStream("maps/map1.csv")));
+        try (BufferedReader mapReader = new BufferedReader(isr)) {
+            int row = 0;
+            String[] gameItems;
+            while (mapReader.ready()) {
+                gameItems = mapReader.readLine().strip().split(",");
+                for (int col = 0; col < gameItems.length; col++) {
+                    String gameObject = gameItems[col];
+                    if ("0".equals(gameObject)) continue;
+                    this.gobjs.add(GameObject.newInstance(gameObject, col * 30, row * 30));
+                }
+                row++;
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        t1 = new Tank(300, 600, 0, 0, (short) 0,1, ResourceManager.getSprite("tank1"),this);
+        TankControl tc1 = new TankControl(t1, KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_SPACE);
+        this.lf.getJf().addKeyListener(tc1);
+
+        t2 = new Tank(1800, 600, 0, 0, (short) 180,2, ResourceManager.getSprite("tank2"),this);
+        TankControl tc2 = new TankControl(t2, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_C);
+        this.lf.getJf().addKeyListener(tc2);
+
+        this.gobjs.add(t1);this.gobjs.add(t2);
+    }
+
+    public void initializeTanks() {
         t1 = new Tank(300, 600, 0, 0, (short) 0,1, ResourceManager.getSprite("tank1"),this);
         TankControl tc1 = new TankControl(t1, KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_SPACE);
         this.lf.getJf().addKeyListener(tc1);
@@ -210,8 +238,6 @@ public class GameWorld extends JPanel implements Runnable {
 
         }
     }
-
-
 
     private void drawSplitScreen(BufferedImage world, Graphics2D g2) {
         int leftTankX = (int) t1.getX() - GameConstants.GAME_SCREEN_WIDTH / 4;

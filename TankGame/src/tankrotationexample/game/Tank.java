@@ -17,7 +17,7 @@ public class Tank extends GameObject {
     private float vy;
     private float angle;
 
-    private float R = 3f;
+    private float R = 2.5f;
     private float ROTATIONSPEED = 3.0f;
 
     List<Bullet> ammo = new ArrayList<>();
@@ -140,7 +140,7 @@ public class Tank extends GameObject {
         if (this.ShootPressed && ((this.timeSinceLastShot + this.cooldown) < System.currentTimeMillis())) {
             this.timeSinceLastShot = System.currentTimeMillis();
 //            this.ammo.add(new Bullet(x, y, angle, ResourceManager.getSprite("bullet")));
-            var b = new Bullet(x,y,angle,ResourceManager.getSprite("bullet"), tankID);
+            var b = new Bullet(x,y,angle,ResourceManager.getSprite("bullet"), tankID, gw);
             this.ammo.add(b);
             gw.addGameObject(b);
             gw.anims.add(new Animation(x,y,ResourceManager.getAnimation("bulletshoot")));
@@ -151,6 +151,7 @@ public class Tank extends GameObject {
 
         this.ammo.forEach(bullet -> bullet.update());
         this.hitbox.setLocation((int)x,(int)y);
+
     }
 
 
@@ -255,12 +256,13 @@ public class Tank extends GameObject {
             gw.anims.add(new Animation(x,y,ResourceManager.getAnimation("bullethit")));
             ResourceManager.getSound("explosion").playSound();
             if (!isDead) {
-                health -= 25;
+                health += shield - 25;
 //                System.out.println(tankID);
                 if (hasShield) {
                     img = originalImg;
                     hasShield = false;
                     shield = 0;
+
                 }
                 if (health <= 0) {
                     isDead = true;
@@ -298,7 +300,6 @@ public class Tank extends GameObject {
         this.health = 100;
         this.isDead = false;
         hasReceivedPowerUp = false;
-
     }
 
     public void toggleShootPressed() {
@@ -311,31 +312,38 @@ public class Tank extends GameObject {
 
 
     public void addHealth() {
-        if (!hasReceivedPowerUp) {
+
             this.health += 25;
             hasReceivedPowerUp = true;
             System.out.println("Hp increase +25");
-        } if(this.health >100) {
+         if(this.health >100) {
             this.health = 100;
+            this.shield = 25;
         }
     }
     public void addSpeed() {
-        if (!hasReceivedPowerUp) {
-            this.R *= 1.10f;
+
+            this.R *= 1.0f;
             hasReceivedPowerUp = true;
             System.out.println("speed");
-        }
+
     }
 
     //figure this out later or scrap it
     public void shield() {
-        if (!hasReceivedPowerUp) {
                 this.shield += 25;
                 this.hasShield = true;
                 this.img = ResourceManager.getSprite("tank3");
                 hasReceivedPowerUp = true;
-            }
 
+    }
+
+    public void resetTank() {
+            this.lives = 3;
+            this.health = 100;
+            this.shield = 0;
+            this.R = 2.5f;
+            isDead = false;
 
     }
 }

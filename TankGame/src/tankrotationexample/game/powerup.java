@@ -33,6 +33,5 @@ public class powerup extends GameObject implements PowerUps{
     public void applyPowerUp(Tank tank) {
         tank.shield();
         collides(tank);
-        tank.addHealth();
     }
 }

@@ -1,6 +1,7 @@
 package tankrotationexample.game;
 
 import tankrotationexample.GameConstants;
+import tankrotationexample.Resources.ResourceManager;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -26,12 +27,12 @@ public class Bullet extends GameObject {
 
     private int damage;
 
-
+    private GameWorld gw;
 
     public int tankID;
 
 
-    public Bullet(float x, float y, float angle, BufferedImage img,int tankID) {
+    public Bullet(float x, float y, float angle, BufferedImage img,int tankID, GameWorld gw) {
         this.x = x;
         this.y = y;
         this.img = img;
@@ -40,7 +41,7 @@ public class Bullet extends GameObject {
         this.angle = angle;
         this.damage = 2;
         this.tankID = tankID;
-
+        this.gw = gw;
         this.hitbox= new Rectangle((int)x, (int)y, this.img.getWidth(), this.img.getHeight());
     }
 
@@ -53,8 +54,11 @@ public class Bullet extends GameObject {
     @Override
     public void collides(GameObject with) {
         if(with instanceof BreakableWall bW) {
-
+            gw.anims.add(new Animation(x-20,y-20, ResourceManager.getAnimation("bullethit")));
             bW.collides(this);
+        }
+        if (with instanceof Wall) {
+            gw.anims.add(new Animation(x-20,y-20,ResourceManager.getAnimation("bullethit")));
         }
 
 //        System.out.println(hasCollided);
