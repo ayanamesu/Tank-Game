@@ -17,25 +17,28 @@ public class Tank extends GameObject {
     private float vy;
     private float angle;
 
-
-
     private float R = 3f;
     private float ROTATIONSPEED = 3.0f;
 
     List<Bullet> ammo = new ArrayList<>();
     long timeSinceLastShot = 0L;
-    long cooldown = 2000;
+    long cooldown = 1000;
 
     private float safeX;
     private float safeY;
 
-
     private int health = 100;
     private int lives = 3;
+
+    private boolean hasShield = false;
+
+    private int shield = 0;
 
     private boolean isDead;
 
     private BufferedImage img;
+
+    private BufferedImage originalImg;
     private boolean UpPressed;
     private boolean DownPressed;
     private boolean RightPressed;
@@ -66,6 +69,7 @@ public class Tank extends GameObject {
         this.initialY = y;
         this.tankID = tankID;
         this.gw = gw;
+        this.originalImg = img;
         this.hitbox= new Rectangle((int)x, (int)y, this.img.getWidth(), this.img.getHeight());
     }
     public Rectangle getHitbox() {
@@ -147,8 +151,6 @@ public class Tank extends GameObject {
 
         this.ammo.forEach(bullet -> bullet.update());
         this.hitbox.setLocation((int)x,(int)y);
-
-
     }
 
 
@@ -214,7 +216,7 @@ public class Tank extends GameObject {
         this.ammo.forEach(b ->b.drawImage(g2d));
         g2d.setColor(Color.CYAN);
         g2d.drawRect((int)x-25,(int)y-20, 100, 10);
-        long currentWidth = 100 - ((this.timeSinceLastShot + this.cooldown) - System.currentTimeMillis())/20;
+        long currentWidth = 100 - ((this.timeSinceLastShot + this.cooldown) - System.currentTimeMillis())/10;
         if(currentWidth >100) {
             currentWidth = 100;
         }
@@ -235,17 +237,30 @@ public class Tank extends GameObject {
         for (int i=0; i < this.lives; i++) {
             g2d.drawOval((int)(x-10) + (i*20), (int)y + 55, 15, 15);
             g2d.fillOval((int)(x-10) + (i*20), (int)y + 55, 15, 15);
-        }
 
+            }
+        if (hasShield) {
+            g.setColor(Color.BLUE);
+            g.drawRect((int) x - 25, (int) y - 30, 100, 14);
+            g2d.fillRect((int)x-25,(int)y-30, this.shield, 14 );
+
+        }
     }
+
+
 
     public void collides(GameObject with) {
         if (with instanceof Bullet b && b.tankID !=tankID) {
             b.hasCollided = true;
             gw.anims.add(new Animation(x,y,ResourceManager.getAnimation("bullethit")));
+            ResourceManager.getSound("explosion").playSound();
             if (!isDead) {
-                health -= 75;
+                health -= 25;
                 System.out.println(tankID);
+                if (hasShield) {
+                    img = originalImg;
+                    hasShield = false;
+                }
                 if (health <= 0) {
                     isDead = true;
                     if (lives > 1) {
@@ -282,11 +297,8 @@ public class Tank extends GameObject {
         this.health = 100;
         this.isDead = false;
         hasReceivedPowerUp = false;
+
     }
-
-
-
-
 
     public void toggleShootPressed() {
         this.ShootPressed = true;
@@ -302,15 +314,13 @@ public class Tank extends GameObject {
             this.health += 25;
             hasReceivedPowerUp = true;
             System.out.println("Hp increase +25");
-
-        }
-        if(this.health >100) {
+        } if(this.health >100) {
             this.health = 100;
         }
     }
     public void addSpeed() {
         if (!hasReceivedPowerUp) {
-            this.R *= 1.05f;
+            this.R *= 1.10f;
             hasReceivedPowerUp = true;
             System.out.println("speed");
         }
@@ -319,8 +329,12 @@ public class Tank extends GameObject {
     //figure this out later or scrap it
     public void shield() {
         if (!hasReceivedPowerUp) {
+                this.shield += 25;
+                this.hasShield = true;
+                this.img = ResourceManager.getSprite("tank3");
+                hasReceivedPowerUp = true;
+            }
 
-            hasReceivedPowerUp = true;
-        }
+
     }
 }

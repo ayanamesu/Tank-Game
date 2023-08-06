@@ -41,6 +41,7 @@ public class ResourceManager {
         try {
             ResourceManager.sprites.put("tank1", loadSprites("tank/tank1.png"));
             ResourceManager.sprites.put("tank2", loadSprites("tank/tank2.png"));
+            ResourceManager.sprites.put("tank3", loadSprites("tank/tank3.png"));
             ResourceManager.sprites.put("bullet", loadSprites("bullets/bullet.png"));
             ResourceManager.sprites.put("star1", loadSprites("bullets/star1.png"));
             ResourceManager.sprites.put("star2", loadSprites("bullets/star2.png"));

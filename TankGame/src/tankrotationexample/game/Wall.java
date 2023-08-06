@@ -1,5 +1,7 @@
 package tankrotationexample.game;
 
+import tankrotationexample.Resources.ResourceManager;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 

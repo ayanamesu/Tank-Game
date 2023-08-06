@@ -19,6 +19,7 @@ public class powerup extends GameObject implements PowerUps{
 
     @Override
     public void collides(GameObject obj2) {
+
         this.hasCollided = true;
     }
 
@@ -32,6 +33,6 @@ public class powerup extends GameObject implements PowerUps{
     public void applyPowerUp(Tank tank) {
         tank.shield();
         collides(tank);
-
+        tank.addHealth();
     }
 }
