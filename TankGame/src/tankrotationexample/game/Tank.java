@@ -286,7 +286,6 @@ public class Tank extends GameObject {
                     this.y += vy;
                 }
 
-            checkBorder();
         } else if (with instanceof PowerUps) {
             ((PowerUps) with).applyPowerUp(this);
             gw.anims.add(new Animation(x,y,ResourceManager.getAnimation("powerpick")));
@@ -318,14 +317,16 @@ public class Tank extends GameObject {
             System.out.println("Hp increase +25");
          if(this.health >100) {
             this.health = 100;
-            this.shield = 25;
+
         }
     }
     public void addSpeed() {
-
-            this.R *= 1.0f;
+            this.R += 1f;
             hasReceivedPowerUp = true;
             System.out.println("speed");
+            if(this.R >= 5f) {
+                this.R = 5f;
+            }
 
     }
 
@@ -335,6 +336,9 @@ public class Tank extends GameObject {
                 this.hasShield = true;
                 this.img = ResourceManager.getSprite("tank3");
                 hasReceivedPowerUp = true;
+            if(this.shield > 25) {
+                this.shield = 25;
+            }
 
     }
 

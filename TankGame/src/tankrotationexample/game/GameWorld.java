@@ -221,22 +221,6 @@ public class GameWorld extends JPanel implements Runnable {
         this.drawSplitScreen(world, g2);
         this.drawMiniMap(world, g2);
 
-        boolean winner = false;
-        if (winner) {
-            winnerFound = true;
-            String winnerMessage;
-            if (t2.isDead()) {
-                winnerMessage = "Tank 1 Wins!";
-            } else {
-                winnerMessage = "Tank 2 Wins!";
-            }
-
-            g2.setColor(Color.WHITE);
-            int messageX = (GameConstants.GAME_SCREEN_WIDTH) / 2;
-            int messageY = GameConstants.GAME_SCREEN_HEIGHT / 2;
-            g2.drawString(winnerMessage, messageX, messageY);
-
-        }
     }
 
     private void drawSplitScreen(BufferedImage world, Graphics2D g2) {
