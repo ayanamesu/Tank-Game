@@ -26,6 +26,7 @@ public class GameWorld extends JPanel implements Runnable {
     private Tank t2;
     private final Launcher lf;
     private long tick = 0;
+    private boolean winnerFound = false;
 
     List<GameObject> gobjs = new ArrayList<>(1000);
     List<Animation> anims = new ArrayList<>();
@@ -57,9 +58,11 @@ public class GameWorld extends JPanel implements Runnable {
                 this.gobjs.removeIf(GameObject::hasCollided);
 
                 if(t1.isDead()|| t2.isDead()) {
-                    this.lf.setFrame("end");
+                   if(winnerFound){
+                        this.lf.setFrame("end");
+                        return;
+                    }
 
-                    return;
                 }
 
                 this.repaint();   // redraw game
@@ -192,12 +195,24 @@ public class GameWorld extends JPanel implements Runnable {
         this.t2.drawImage(buffer);
         this.anims.forEach(animation -> animation.drawImage(buffer));
         g2.drawImage(world, 0, 0, null);
-        // IF I TRY TO USE THIS BUFFERIMAGE for mm I GET A GIANT ERROR loop
-//        BufferedImage mm = world.getSubimage(0,0,GameConstants.GAME_WORLD_WIDTH, GameConstants.GAME_WORLD_HEIGHT);
         this.drawSplitScreen(world, g2);
         this.drawMiniMap(world, g2);
 
+        if (winnerFound) {
+            winnerFound = true;
+            String winnerMessage;
+            if (t2.isDead()) {
+                winnerMessage = "Tank 1 Wins!";
+            } else {
+                winnerMessage = "Tank 2 Wins!";
+            }
 
+            g2.setColor(Color.WHITE);
+            int messageX = (GameConstants.GAME_SCREEN_WIDTH) / 2;
+            int messageY = GameConstants.GAME_SCREEN_HEIGHT / 2;
+            g2.drawString(winnerMessage, messageX, messageY);
+
+        }
     }
 
 

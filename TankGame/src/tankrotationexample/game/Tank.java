@@ -243,7 +243,7 @@ public class Tank extends GameObject {
         if (with instanceof Bullet b && b.tankID !=tankID) {
             b.hasCollided = true;
             if (!isDead) {
-                health -= 25;
+                health -= 75;
                 System.out.println(tankID);
                 if (health <= 0) {
                     isDead = true;
