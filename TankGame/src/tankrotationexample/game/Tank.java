@@ -256,10 +256,11 @@ public class Tank extends GameObject {
             ResourceManager.getSound("explosion").playSound();
             if (!isDead) {
                 health -= 25;
-                System.out.println(tankID);
+//                System.out.println(tankID);
                 if (hasShield) {
                     img = originalImg;
                     hasShield = false;
+                    shield = 0;
                 }
                 if (health <= 0) {
                     isDead = true;

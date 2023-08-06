@@ -141,10 +141,6 @@ public class GameWorld extends JPanel implements Runnable {
          */
 
         InputStreamReader isr = new InputStreamReader(Objects.requireNonNull(ResourceManager.class.getClassLoader().getResourceAsStream("maps/map1.csv")));
-
-//        this.anims.add(new Animation(450,300,ResourceManager.getAnimation("puffsmoke")));
-//        this.anims.add(new Animation(500,300,ResourceManager.getAnimation("rocketflame")));
-//        this.anims.add(new Animation(550,300,ResourceManager.getAnimation("rockethit")));
         try (BufferedReader mapReader = new BufferedReader(isr)) {
             int row = 0;
             String[] gameItems;
