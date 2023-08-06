@@ -59,9 +59,10 @@ public class GameWorld extends JPanel implements Runnable {
 
                 if(t1.isDead()|| t2.isDead()) {
                    if(winnerFound){
-                        this.lf.setFrame("end");
-                        return;
+
                     }
+                    this.lf.setFrame("end");
+                    return;
 
                 }
 
@@ -140,9 +141,7 @@ public class GameWorld extends JPanel implements Runnable {
          */
 
         InputStreamReader isr = new InputStreamReader(Objects.requireNonNull(ResourceManager.class.getClassLoader().getResourceAsStream("maps/map1.csv")));
-//        this.anims.add(new Animation(300,300,ResourceManager.getAnimation("bullethit")));
-//        this.anims.add(new Animation(350,300,ResourceManager.getAnimation("bulletshoot")));
-//        this.anims.add(new Animation(400,300,ResourceManager.getAnimation("powerpick")));
+
 //        this.anims.add(new Animation(450,300,ResourceManager.getAnimation("puffsmoke")));
 //        this.anims.add(new Animation(500,300,ResourceManager.getAnimation("rocketflame")));
 //        this.anims.add(new Animation(550,300,ResourceManager.getAnimation("rockethit")));
@@ -198,7 +197,8 @@ public class GameWorld extends JPanel implements Runnable {
         this.drawSplitScreen(world, g2);
         this.drawMiniMap(world, g2);
 
-        if (winnerFound) {
+        boolean winner = false;
+        if (winner) {
             winnerFound = true;
             String winnerMessage;
             if (t2.isDead()) {

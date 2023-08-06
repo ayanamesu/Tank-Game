@@ -242,6 +242,7 @@ public class Tank extends GameObject {
     public void collides(GameObject with) {
         if (with instanceof Bullet b && b.tankID !=tankID) {
             b.hasCollided = true;
+            gw.anims.add(new Animation(x,y,ResourceManager.getAnimation("bullethit")));
             if (!isDead) {
                 health -= 75;
                 System.out.println(tankID);
