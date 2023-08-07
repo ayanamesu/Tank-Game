@@ -1,7 +1,5 @@
 package tankrotationexample.game;
 
-import tankrotationexample.Resources.ResourceManager;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -32,9 +30,6 @@ public class Wall extends GameObject {
 
     public void drawImage(Graphics buffer) {
         buffer.drawImage(this.img, (int)x, (int)y, null);
-        //test
-//        buffer.setColor(Color.black);
-//        buffer.drawRect(this.hitbox.x, this.hitbox.y, this.hitbox.width, this.hitbox.height);
     }
 
 

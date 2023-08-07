@@ -6,7 +6,6 @@ import tankrotationexample.Resources.ResourceManager;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.util.List;
 
 public class Bullet extends GameObject {
 
@@ -25,8 +24,6 @@ public class Bullet extends GameObject {
 
     private Rectangle hitbox;
 
-    private int damage;
-
     private GameWorld gw;
 
     public int tankID;
@@ -39,7 +36,6 @@ public class Bullet extends GameObject {
         this.vx =0;
         this.vy = 0;
         this.angle = angle;
-        this.damage = 2;
         this.tankID = tankID;
         this.gw = gw;
         this.hitbox= new Rectangle((int)x, (int)y, this.img.getWidth(), this.img.getHeight());
@@ -60,22 +56,8 @@ public class Bullet extends GameObject {
         if (with instanceof Wall) {
             gw.anims.add(new Animation(x-20,y-20,ResourceManager.getAnimation("bullethit")));
         }
-
-//        System.out.println(hasCollided);
         hasCollided = true;
     }
-
-
-
-    public float getX() {
-        return this.x;
-    }
-
-    public float getY() {
-        return this.y;
-    }
-
-
 
     void update() {
         vx = Math.round(R * Math.cos(Math.toRadians(angle)));
@@ -86,8 +68,6 @@ public class Bullet extends GameObject {
         this.hitbox.setLocation((int)x,(int)y);
 
     }
-
-
 
     private void checkBorder() {
         if ((x < 30) || (x >= GameConstants.GAME_WORLD_WIDTH - 88)) {
@@ -125,11 +105,5 @@ public class Bullet extends GameObject {
         this.img = img;
     }
 
-    public void setDamage(int damage) {
-        this.damage = damage;
-    }
 
-    public int getDamage() {
-        return damage;
-    }
 }

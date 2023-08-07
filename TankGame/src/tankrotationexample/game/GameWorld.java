@@ -53,7 +53,6 @@ public class GameWorld extends JPanel implements Runnable {
                 this.t1.update(this); // update tank
                 this.t2.update(this);
                 this.anims.forEach(animation -> animation.update());
-//                System.out.println(this.gobjs.size());
                 this.checkCollision();
                 this.gobjs.removeIf(GameObject::hasCollided);
 
@@ -94,7 +93,6 @@ public class GameWorld extends JPanel implements Runnable {
                 if (obj2 instanceof  Tank) continue;
                 if(obj1.getHitbox().intersects(obj2.getHitbox())) {
                     obj1.collides(obj2);
-                 //   System.out.println(obj1 + " " + "Has hit" + " " + obj2);
                     if(obj1 instanceof Tank && obj2 instanceof PowerUps) {
                         ResourceManager.getSound("pickup").playSound();
                     }

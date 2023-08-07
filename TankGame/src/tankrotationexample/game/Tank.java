@@ -299,6 +299,8 @@ public class Tank extends GameObject {
         this.health = 100;
         this.isDead = false;
         hasReceivedPowerUp = false;
+        this.shield = 0;
+        this.R = 2.5f;
     }
 
     public void toggleShootPressed() {
@@ -330,7 +332,7 @@ public class Tank extends GameObject {
 
     }
 
-    //figure this out later or scrap it
+
     public void shield() {
                 this.shield += 25;
                 this.hasShield = true;
