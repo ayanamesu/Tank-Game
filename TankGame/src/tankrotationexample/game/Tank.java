@@ -264,6 +264,7 @@ public class Tank extends GameObject {
                     shield = 0;
 
                 }
+
                 if (health <= 0) {
                     isDead = true;
                     if (lives > 1) {
@@ -350,6 +351,5 @@ public class Tank extends GameObject {
             this.shield = 0;
             this.R = 2.5f;
             isDead = false;
-
     }
 }
