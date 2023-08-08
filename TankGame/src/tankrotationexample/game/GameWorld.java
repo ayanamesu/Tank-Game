@@ -56,12 +56,17 @@ public class GameWorld extends JPanel implements Runnable {
                 this.checkCollision();
                 this.gobjs.removeIf(GameObject::hasCollided);
 
-                if(t1.isDead()|| t2.isDead()) {
+                if(t1.isDead()) {
                     bg.stop();
-                    this.lf.setFrame("end");
+                    this.lf.setFrame("winnerTwo");
                     return;
 
 
+                }
+                if(t2.isDead()) {
+                    bg.stop();
+                    this.lf.setFrame("winnerOne");
+                    return;
                 }
 
                 this.repaint();   // redraw game

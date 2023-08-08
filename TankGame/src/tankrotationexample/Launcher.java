@@ -4,6 +4,9 @@ import tankrotationexample.Resources.ResourceManager;
 import tankrotationexample.game.GameWorld;
 import tankrotationexample.menus.EndGamePanel;
 import tankrotationexample.menus.StartMenuPanel;
+import tankrotationexample.menus.winnerOnePanel;
+import tankrotationexample.menus.winnerTwoPanel;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
@@ -56,11 +59,16 @@ public class Launcher {
          * end panel is used to show the end game panel.  it will contain
          * two buttons restart and exit.
          */
+
+        JPanel winnerOne = new winnerOnePanel(this);
+        JPanel winnerTwo = new winnerTwoPanel(this);
         JPanel endPanel = new EndGamePanel(this); // create a new end game pane;
         cl = new CardLayout(); // creating a new CardLayout Panel
         this.mainPanel.setLayout(cl); // set the layout of the main panel to our card layout
         this.mainPanel.add(startPanel, "start"); //add the start panel to the main panel
         this.mainPanel.add(gamePanel, "game");   //add the game panel to the main panel
+        this.mainPanel.add(winnerOne, "winnerOne");
+        this.mainPanel.add(winnerTwo, "winnerTwo");
         this.mainPanel.add(endPanel, "end");    // add the end game panel to the main panel
         this.jf.add(mainPanel); // add the main panel to the JFrame
         this.jf.setResizable(false); //make the JFrame not resizable
@@ -80,7 +88,7 @@ public class Launcher {
                 // not stuck executing the game loop.
                 (new Thread(this.gamePanel)).start();
             }
-            case "end" ->
+            case "end", "winnerOne", "winnerTwo" ->
                 // set the size of the jFrame to the expected size for the end panel
                     this.jf.setSize(GameConstants.END_MENU_SCREEN_WIDTH, GameConstants.END_MENU_SCREEN_HEIGHT);
         }
