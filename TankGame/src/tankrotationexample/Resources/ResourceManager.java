@@ -46,7 +46,7 @@ public class ResourceManager {
             ResourceManager.sprites.put("star1", loadSprites("bullets/star1.png"));
             ResourceManager.sprites.put("star2", loadSprites("bullets/star2.png"));
             ResourceManager.sprites.put("bwall", loadSprites("walls/breakableWall.png"));
-            ResourceManager.sprites.put("bwall1", loadSprites("walls/breakableWall1.png"));
+            ResourceManager.sprites.put("uwall2", loadSprites("walls/unbreakableWall2.png"));
             ResourceManager.sprites.put("bwall2", loadSprites("walls/breakableWall2.png"));
             ResourceManager.sprites.put("ubwall", loadSprites("walls/unbreakableWall.png"));
             ResourceManager.sprites.put("powerup", loadSprites("powerUp/powerup.png"));
