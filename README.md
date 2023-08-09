@@ -1,10 +1,10 @@
 # csc413-tankgame
 
 
-| Student Information |                |
-|:-------------------:|----------------|
-|  Student Name       |   Name Here    |
-|  Student Email      |   Email Here   |
+| Student Information |                 |
+|:-------------------:|-----------------|
+|  Student Name       | Wing Lee        |
+|  Student Email      | wlee17@sfsu.edu |
 
 ## src Folder Purpose 
 src folder is to be used to store source code only.
@@ -23,24 +23,28 @@ The jar folder is to be used to store the built jar of your term-project.
 
 # Required Information when Submitting Tank Game
 
-## Version of Java Used:
+## Version of Java Used:    Java JDK 20
 
-## IDE used: 
+## IDE used: INTELLIJ IDEA 2023.1.2
 
-## Steps to Import project into IDE:
+## Steps to Import project into IDE: 
+### First on the Git Hub Repository go to Code ("Green Button") and under HTTPS copy the link, then on your IDE or Terminal enter in the Git command "git clone - https://github.com/csc413-SFSU-Souza/csc413-tankgame-ayanamesu.git and then it should be ready for building...
 
-## Steps to Build your Project:
+
+## Steps to Build your Project: 
+### Begin by building the project by selecting Import Project then select the tank game as the root folder and keep hitting next make sure to use Java JDK 20 if you do not have it downloaded on your computer.
  
-## Steps to run your Project:
+## Steps to run your Project: 
+### To run this project you would need to click on the Jar folder named csc413-tankgame-ayanamesu which is located in the jar folder. Then in the jar folder click TankGame (execuatable JAR file). It should launch game to the title screen, click on the start button to play the game :)
 
 ## Controls to play your Game:
 
 |               | Player 1 | Player 2 |
 |---------------|----------|----------|
-|  Forward      |          |          |
-|  Backward     |          |          |
-|  Rotate left  |          |          |
-|  Rotate Right |          |          |
-|  Shoot        |          |          |
+|  Forward      | W        | UP       |
+|  Backward     | S        | DOWN     |
+|  Rotate left  | A        | LEFT     |
+|  Rotate Right | D        | RIGHT    |
+|  Shoot        | SPACE    | C        |
 
 <!-- you may add more controls if you need to. -->
