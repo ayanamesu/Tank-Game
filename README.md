@@ -28,7 +28,7 @@ The jar folder is to be used to store the built jar of your term-project.
 ## IDE used: INTELLIJ IDEA 2023.1.2
 
 ## Steps to Import project into IDE: 
-### First on the Git Hub Repository go to Code ("Green Button") and under HTTPS copy the link, then on your IDE or Terminal enter in the Git command "git clone - https://github.com/csc413-SFSU-Souza/csc413-tankgame-ayanamesu.git and then it should be ready for building...
+### First on the GitHub Repository go to Code ("Green Button") and under HTTPS copy the link, then on your IDE or Terminal enter in the Git command "git clone - https://github.com/csc413-SFSU-Souza/csc413-tankgame-ayanamesu.git " and then it should be ready for building...
 
 
 ## Steps to Build your Project: 
