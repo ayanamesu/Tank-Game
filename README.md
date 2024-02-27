@@ -6,6 +6,9 @@
 |  Student Name       | Wing Lee        |
 |  Student Email      | wlee17@sfsu.edu |
 
+
+![Screenshot 2024-02-27 005607](https://github.com/ayanamesu/Tank-Game/assets/81396481/c855c883-f53f-449d-8673-2073d3d89c62)
+
 ## src Folder Purpose 
 src folder is to be used to store source code only.
 
